@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+	
+<title>tic tac toe &mdash; Textures</title>
+
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+
+
+<script id="shader-vs" type="x-shader/x-vertex">
+	
+    attribute vec3 aVertexPosition;
+
+    attribute vec2 aTextureCoord;
+    
+    uniform mat4 uMVMatrix;
+
+    uniform mat4 uPMatrix;
+
+    varying vec2 vTextureCoord;
+    
+    void main(void) {
+		
+        gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+        
+        // For the fragment shader
+        
+        vTextureCoord = aTextureCoord;
+    }
+</script>
+
+<script id="shader-fs" type="x-shader/x-fragment">
+	
+    precision mediump float;
+
+    varying vec2 vTextureCoord;
+
+    uniform sampler2D uSampler;
+
+    void main(void) {
+		
+        gl_FragColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));
+    }
+    
+</script>
+
+<!-- The JS files -->
+
+<!-- Some useful functions for browser compatibility -->
+
+<script type="text/javascript" src="webgl-utils.js"></script>
+
+<!-- Handling vectors and matrices -->
+
+<script type="text/javascript" src="maths.js"></script>
+
+<!-- WebGL code -->
+
+<script type="text/javascript" src="initShaders.js"></script>
+
+<script type="text/javascript" src="TicTacToe.js"></script>
+
+</head>
+
+<body onload="runWebGL();">
+
+	<div style="text-align: center">
+		
+        <p><h1> Tic Tac Toe 3D </h1></p>
+		
+		<canvas id="my-canvas" style="border:1px solid #000000;" width="800" height="800"></canvas>
+
+        <p>Use cursor keys to spin and <code>Page Up</code>/<code>Page Down</code> to zoom out/in.</p>
+		
+		<p>Press any mouse button and move the cursor to rotate the models.</p>
+		
+		<p>XX rotation: 
+			
+		<button id="XX-on-off-button">On / Off</button>
+
+	    <button id="XX-direction-button">Change Direction</button>
+
+	    <button id="XX-slower-button">Slower</button>
+
+	    <button id="XX-faster-button">Faster</button>
+
+		</p>
+		
+		<p>YY rotation: 
+			
+		<button id="YY-on-off-button">On / Off</button>
+
+	    <button id="YY-direction-button">Change Direction</button>
+
+	    <button id="YY-slower-button">Slower</button>
+
+	    <button id="YY-faster-button">Faster</button>
+
+		</p>
+		
+		<p>ZZ rotation: 
+			
+		<button id="ZZ-on-off-button">On / Off</button>
+
+	    <button id="ZZ-direction-button">Change Direction</button>
+
+	    <button id="ZZ-slower-button">Slower</button>
+
+	    <button id="ZZ-faster-button">Faster</button>
+
+		</p>
+		
+<!--		<p>Choose the <b>projection type</b>:
+		
+        <select id="projection-selection">
+			<option value="0">Orthogonal Projection</option>
+			<option value="1">Perspective Projection</option>
+        </select>
+        
+</p>-->
+                
+		<p>
+		
+		<button id="reset-button">Reset</button>
+				
+		</p>
+				
+	</div>
+
+</body>
+
+</html>

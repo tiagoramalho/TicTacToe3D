@@ -1,4 +1,10 @@
-//----------------------------------------------------------------------------
+//////////////////////////////////////////////////////////////////////////////
+//
+//  TicTacToe.js 
+//
+//  Adapted from WebGl_example28.js, by professor J.Madeira 
+//
+//-------------------------------------------------------------------------
 //
 // Global Variables
 //
@@ -231,7 +237,7 @@ function initTexture() {
 		handleLoadedTexture(webGLTexture)
 	}
 
-	webGLTexture.image.src = "NeHe.gif";
+	webGLTexture.image.src = "ramalho.jpg";
 }
 
 //----------------------------------------------------------------------------
@@ -329,6 +335,11 @@ function drawModel( angleXX, angleYY, angleZZ,
 //----------------------------------------------------------------------------
 
 //  Drawing the 3D scene
+//  variavel near para usar na perspectiva
+var near = 0.05;
+//
+//  variavel far para usar na perspectiva
+var far = 10;
 
 
 
@@ -368,7 +379,7 @@ function drawScene() {
     
     // Ensure that the model is "inside" the view volume
     
-    pMatrix = perspective( 45, 1, 0.05, 10 );
+    pMatrix = perspective( 45, 1, near, far);
     
     globalTz = -3;
 
@@ -385,7 +396,6 @@ function drawScene() {
 	
 	// Call the drawModel function !!
 	
-	// Instance 1 --- RIGHT TOP
 	
 	drawModel( -angleXX, angleYY, angleZZ, 
 	           sx, sy, sz,
@@ -393,7 +403,6 @@ function drawScene() {
 	           mvMatrix,
 	           primitiveType );
 	           	       
-	// Instance 2 --- LEFT TOP
 	
 	drawModel( -angleXX, -angleYY, -angleZZ,  // CW rotations
 	           sx, sy, sz,
@@ -401,7 +410,6 @@ function drawScene() {
 	           mvMatrix,
 	           primitiveType );
 	           
-	// Instance 3 --- LEFT BOTTOM
 	
 	drawModel( angleXX, angleYY, -angleZZ, 
 	           sx, sy, sz,
@@ -409,7 +417,6 @@ function drawScene() {
 	           mvMatrix,
 	           primitiveType );
 	           	       
-	// Instance 4 --- RIGHT BOTTOM
 	
 	drawModel( angleXX, -angleYY, angleZZ,  // CW rotations
 	           sx, sy, sz,
@@ -417,7 +424,6 @@ function drawScene() {
 	           mvMatrix,
 	           primitiveType );
 
-	// Instance 1 --- RIGHT TOP
 	
 	drawModel( -angleXX, angleYY, angleZZ, 
 	           sx, sy, sz,
@@ -425,7 +431,6 @@ function drawScene() {
 	           mvMatrix,
 	           primitiveType );
 	           	       
-	// Instance 2 --- LEFT TOP
 	
 	drawModel( -angleXX, -angleYY, -angleZZ,  // CW rotations
 	           sx, sy, sz,
@@ -433,7 +438,6 @@ function drawScene() {
 	           mvMatrix,
 	           primitiveType );
 	           
-	// Instance 3 --- LEFT BOTTOM
 	
 	drawModel( angleXX, angleYY, -angleZZ, 
 	           sx, sy, sz,
@@ -441,7 +445,6 @@ function drawScene() {
 	           mvMatrix,
 	           primitiveType );
 	           	       
-	// Instance 4 --- RIGHT BOTTOM
 	
 	drawModel( angleXX, -angleYY, angleZZ,  // CW rotations
 	           sx, sy, sz,
@@ -449,7 +452,6 @@ function drawScene() {
 	           mvMatrix,
 	           primitiveType );
 	           
-	// Instance 1 --- RIGHT TOP
 	
 	drawModel( -angleXX, angleYY, angleZZ, 
 	           sx, sy, sz,
@@ -457,15 +459,13 @@ function drawScene() {
 	           mvMatrix,
 	           primitiveType );
 	           	       
-	// Instance 2 --- LEFT TOP
-	
+
 	drawModel( -angleXX, -angleYY, -angleZZ,  // CW rotations
 	           sx, sy, sz,
 	           tx - 0.5, ty + 0.5, tz-0.5,
 	           mvMatrix,
 	           primitiveType );
-	           
-	// Instance 3 --- LEFT BOTTOM
+
 	
 	drawModel( angleXX, angleYY, -angleZZ, 
 	           sx, sy, sz,
@@ -473,7 +473,6 @@ function drawScene() {
 	           mvMatrix,
 	           primitiveType );
 	           	       
-	// Instance 4 --- RIGHT BOTTOM
 	
 	drawModel( angleXX, -angleYY, angleZZ,  // CW rotations
 	           sx, sy, sz,
@@ -481,13 +480,13 @@ function drawScene() {
 	           mvMatrix,
 	           primitiveType );
     
-	// Instance 4 --- RIGHT BOTTOM
 	
 	drawModel( angleXX, -angleYY, angleZZ,  // CW rotations
 	           sx, sy, sz,
 	           tx, ty - 0.5, tz-0.5,
 	           mvMatrix,
 	           primitiveType );
+
 
 	drawModel( angleXX, -angleYY, angleZZ,  // CW rotations
 	           sx, sy, sz,
@@ -712,6 +711,7 @@ function handleKeys() {
 
 // Adapted from www.learningwebgl.com
 
+var moveImage = false;
 
 var mouseDown = false;
 
@@ -722,7 +722,9 @@ var lastMouseY = null;
 function handleMouseDown(event) {
 	
     mouseDown = true;
-  
+    //verificar se depois do click o rato move ou nao
+    moveImage = false; 
+
     lastMouseX = event.clientX;
   
     lastMouseY = event.clientY;
@@ -735,16 +737,23 @@ function handleMouseDown(event) {
 
 function handleMouseUp(event) {
 
+    var newX = event.clientX;
+  
+    var newY = event.clientY;
+    // se entrar no if nao se moveu logo se clicou num cubo e a jogada
+    if(moveImage == false && newX == lastMouseX && newY == lastMouseY){
+        clickCubo(newX, newY);
+    }
     mouseDown = false;
 }
 
 function handleMouseMove(event) {
 
     if (!mouseDown) {
-	  
-      return;
+        return;
     } 
-  
+    //caso o rato mova tem de passar a true
+    moveImage = true; 
     // Rotation angles proportional to cursor displacement
     
     var newX = event.clientX;
@@ -763,6 +772,22 @@ function handleMouseMove(event) {
     
     lastMouseY = newY;
   }
+//--------------------------------------------------------------------------- 
+//Calculo para chegar ao cubo
+function clickCubo(x, y) {
+
+	var canvas = document.getElementById("my-canvas");
+    var rect = canvas.getBoundingClientRect();	
+    console.log(rect);
+
+    pointX = (x-rect.left) / rect.width * 2 - 1;
+    pointY = (y- rect.top) / rect.height * -2 + 1;
+
+    console.log("x--> " + pointX);
+    console.log("y--> " + pointY);
+
+
+}
 //----------------------------------------------------------------------------
 
 // Timer
@@ -1026,7 +1051,6 @@ function initWebGL( canvas ) {
 function runWebGL() {
 	
 	var canvas = document.getElementById("my-canvas");
-	
 	initWebGL( canvas );
 
 	shaderProgram = initShaders( gl );

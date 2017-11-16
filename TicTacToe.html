@@ -3,132 +3,143 @@
 <html>
 
 <head>
-	
-<title>tic tac toe &mdash; Textures</title>
 
-<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+    <title>tic tac toe &mdash; Textures</title>
+
+    <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
 
 
-<script id="shader-vs" type="x-shader/x-vertex">
-	
-    attribute vec3 aVertexPosition;
+    <link rel="stylesheet" href="css/bootstrap-grid.css" type="text/css">
+    <link rel="stylesheet" href="css/bootstrap.css" type="text/css">
+    <script id="shader-vs" type="x-shader/x-vertex">
 
-    attribute vec2 aTextureCoord;
-    
-    uniform mat4 uMVMatrix;
+            attribute vec3 aVertexPosition;
 
-    uniform mat4 uPMatrix;
+            attribute vec2 aTextureCoord;
 
-    varying vec2 vTextureCoord;
-    
-    void main(void) {
-		
-        gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
-        
-        // For the fragment shader
-        
-        vTextureCoord = aTextureCoord;
-    }
-</script>
+            uniform mat4 uMVMatrix;
 
-<script id="shader-fs" type="x-shader/x-fragment">
-	
-    precision mediump float;
+            uniform mat4 uPMatrix;
 
-    varying vec2 vTextureCoord;
+            varying vec2 vTextureCoord;
 
-    uniform sampler2D uSampler;
+            void main(void) {
 
-    void main(void) {
-		
-        gl_FragColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));
-    }
-    
-</script>
+                gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
 
-<!-- The JS files -->
+                // For the fragment shader
 
-<!-- Some useful functions for browser compatibility -->
+                vTextureCoord = aTextureCoord;
+            }
+        </script>
 
-<script type="text/javascript" src="webgl-utils.js"></script>
+    <script id="shader-fs" type="x-shader/x-fragment">
 
-<!-- Handling vectors and matrices -->
+            precision mediump float;
 
-<script type="text/javascript" src="maths.js"></script>
+            varying vec2 vTextureCoord;
 
-<!-- WebGL code -->
+            uniform sampler2D uSampler;
 
-<script type="text/javascript" src="initShaders.js"></script>
+            void main(void) {
 
-<script type="text/javascript" src="TicTacToe.js"></script>
+                gl_FragColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));
+            }
+
+        </script>
+
+    <!-- The JS files -->
+
+    <!-- Some useful functions for browser compatibility -->
+
+    <script type="text/javascript" src="webgl-utils.js"></script>
+
+    <!-- Handling vectors and matrices -->
+
+    <script type="text/javascript" src="maths.js"></script>
+
+    <!-- WebGL code -->
+
+    <script type="text/javascript" src="initShaders.js"></script>
+
+    <script type="text/javascript" src="TicTacToe.js"></script>
 
 </head>
 
 <body onload="runWebGL();">
+<div class="container" style="width: 100%">
+    <div class="row">
+        <div class="col-md-3">
+            <h2 style="text-align: center; margin-top: 50px"> Jogador 1 </h2>
+            <div style="display: flex; margin-top: 30px">
+                <img src="ramalho.jpg" style="margin: auto">
+            </div>
+            <h2 style="text-align: center; margin-top: 30px">Vitórias: 2</h2>
+        </div>
+        <div class="col-md-6">
+            <div style="text-align: center">
 
-	<div style="text-align: center">
-		
-        <p><h1> Tic Tac Toe 3D </h1></p>
-		
-		<canvas id="my-canvas" style="border:1px solid #000000;" width="800" height="800"></canvas>
+                <p><h1> Tic Tac Toe 3D </h1></p>
 
-        <p>Use cursor keys to spin and <code>Page Up</code>/<code>Page Down</code> to zoom out/in.</p>
-		
-		<p>Press any mouse button and move the cursor to rotate the models.</p>
-		
-		<p>XX rotation: 
-			
-		<button id="XX-on-off-button">On / Off</button>
+                <canvas id="my-canvas" style="border:1px solid #000000;" width="800" height="800"></canvas>
 
-	    <button id="XX-direction-button">Change Direction</button>
+                <p>Use cursor keys to spin and <code>Page Up</code>/<code>Page Down</code> to zoom out/in.</p>
 
-	    <button id="XX-slower-button">Slower</button>
+                <p>Press any mouse button and move the cursor to rotate the models.</p>
 
-	    <button id="XX-faster-button">Faster</button>
+                <p>XX rotation:
 
-		</p>
-		
-		<p>YY rotation: 
-			
-		<button id="YY-on-off-button">On / Off</button>
+                    <button id="XX-on-off-button">On / Off</button>
 
-	    <button id="YY-direction-button">Change Direction</button>
+                    <button id="XX-direction-button">Change Direction</button>
 
-	    <button id="YY-slower-button">Slower</button>
+                    <button id="XX-slower-button">Slower</button>
 
-	    <button id="YY-faster-button">Faster</button>
+                    <button id="XX-faster-button">Faster</button>
 
-		</p>
-		
-		<p>ZZ rotation: 
-			
-		<button id="ZZ-on-off-button">On / Off</button>
+                </p>
 
-	    <button id="ZZ-direction-button">Change Direction</button>
+                <p>YY rotation:
 
-	    <button id="ZZ-slower-button">Slower</button>
+                    <button id="YY-on-off-button">On / Off</button>
 
-	    <button id="ZZ-faster-button">Faster</button>
+                    <button id="YY-direction-button">Change Direction</button>
 
-		</p>
-		
-<!--		<p>Choose the <b>projection type</b>:
-		
-        <select id="projection-selection">
-			<option value="0">Orthogonal Projection</option>
-			<option value="1">Perspective Projection</option>
-        </select>
-        
-</p>-->
-                
-		<p>
-		
-		<button id="reset-button">Reset</button>
-				
-		</p>
-				
-	</div>
+                    <button id="YY-slower-button">Slower</button>
 
+                    <button id="YY-faster-button">Faster</button>
+
+                </p>
+
+                <p>ZZ rotation:
+
+                    <button id="ZZ-on-off-button">On / Off</button>
+
+                    <button id="ZZ-direction-button">Change Direction</button>
+
+                    <button id="ZZ-slower-button">Slower</button>
+
+                    <button id="ZZ-faster-button">Faster</button>
+
+                </p>
+
+
+                <p>
+
+                    <button id="reset-button">Reset</button>
+
+                </p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <h2 style="text-align: center; margin-top: 50px"> Jogador 2 </h2>
+            <div style="display: flex; margin-top: 30px">
+                <img src="branco.jpg" style="margin: auto;">
+            </div>
+            <h2 style="text-align: center; margin-top: 30px">Vitórias: 0</h2>
+        </div>
+        </div>
+    </div>
 </body>
 
 </html>

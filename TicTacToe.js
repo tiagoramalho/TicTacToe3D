@@ -425,7 +425,7 @@ function drawScene() {
 	// Call the drawModel function !!
 
 	var possible_values = [-0.5, 0, 0.5]
-
+	cube_array = [];
 	for (var i = 0; i < possible_values.length; i++) {
 		for (var j = 0; j < possible_values.length; j++) {
 			for (var k = 0; k < possible_values.length; k++) {
@@ -440,7 +440,7 @@ function drawScene() {
 	/*
 	
 	cube_array.push(new Cube(tx + 0.5, ty + 0.5, tz+0.5, mvMatrix));
-	cube_array.push(new Cube(tx - 0.5, ty + 0.5, tz+0.5, mvMatrix));
+	cube_array.push(new Cube(tx - 0.5, ty + 0.5, tz+0.5, mvMatrix));7
 	cube_array.push(new Cube(tx + 0.5, ty - 0.5, tz+0.5, mvMatrix));
 	cube_array.push(new Cube(tx - 0.5, ty - 0.5, tz+0.5, mvMatrix));
 	cube_array.push(new Cube(tx + 0.5, ty + 0.5, tz,	 mvMatrix));

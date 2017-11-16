@@ -3,6 +3,8 @@
 // Global Variables
 //
 
+
+
 var gl = null; // WebGL context
 
 var shaderProgram = null; 
@@ -68,6 +70,9 @@ var rotationZZ_ON = 0;
 var rotationZZ_DIR = 1;
 
 var rotationZZ_SPEED = 1;
+
+var cube_array;
+
 
  // NEW - GLOBAL Animation controls
 
@@ -181,8 +186,16 @@ var cubeVertexIndices = [
 
             20, 21, 22,   20, 22, 23  // Left face
 ];
-         
-         
+
+
+
+
+    
+
+
+
+
+
 //----------------------------------------------------------------------------
 //
 // The WebGL code
@@ -316,6 +329,26 @@ function drawModel( angleXX, angleYY, angleZZ,
 //----------------------------------------------------------------------------
 
 //  Drawing the 3D scene
+
+
+
+class Cube {
+  constructor(tx, ty, tz,mvMatrix) {
+    this.tx = tx;
+    this.ty = ty;
+    this.tz = tz;
+
+
+    drawModel( -angleXX, angleYY, angleZZ, 
+	           sx, sy, sz,
+	           tx + 0.2, ty + 0.2, tz+0.2,
+	           mvMatrix,
+	           primitiveType );
+  }
+}
+
+
+cube_array = new Array();
 
 function drawScene() {
 	
@@ -539,7 +572,27 @@ function drawScene() {
 	           tx + 0.5, ty , tz+0.5,
 	           mvMatrix,
 	           primitiveType );
+
+	cube_array.push(new Cube(tx + 0.1, ty +0.1, tz+0.1, mvMatrix));
+	
 }
+
+function detect_intersection(x_clicked, y_clicked){
+
+	x_clicked = x_clicked / gl.canvas.width  *  2 - 1;
+  	y_clicked = y_clicked / gl.canvas.height * -2 + 1;
+    console.log("CLicked: X " + x_clicked + " - Y " + y_clicked);
+  	
+	for (var i = 0; i < cube_array.length; i++) {
+		var cube = cube_array[i];
+		if (cube.tx + 0.35 > x_clicked && cube.tx - 0.35 < x_clicked && cube.ty + 0.35 > y_clicked && cube.ty - 0.35 < x_clicked){
+			console.log("Carregaste num cubo");
+		}
+	}
+
+}
+
+
 
 //----------------------------------------------------------------------------
 //
@@ -673,6 +726,11 @@ function handleMouseDown(event) {
     lastMouseX = event.clientX;
   
     lastMouseY = event.clientY;
+
+    detect_intersection(lastMouseX, lastMouseY)
+
+
+
 }
 
 function handleMouseUp(event) {
@@ -983,5 +1041,9 @@ function runWebGL() {
 
 	outputInfos();
 }
+
+
+
+
 
 

@@ -226,19 +226,31 @@ function handleLoadedTexture(texture) {
 	gl.bindTexture(gl.TEXTURE_2D, null);
 }
 
-
-var webGLTexture;
+var ramalhoTexture;
+var brancoTexture;
 
 function initTexture() {
-	
-	webGLTexture = gl.createTexture();
-	webGLTexture.image = new Image();
-	webGLTexture.image.onload = function () {
-		handleLoadedTexture(webGLTexture)
+	ramalhoTexture = gl.createTexture();
+	ramalhoTexture.image = new Image();
+	ramalhoTexture.image.onload = function () {
+		handleLoadedTexture(ramalhoTexture)
 	}
 
-	webGLTexture.image.src = "ramalho.jpg";
+	ramalhoTexture.image.src = "ramalho.jpg";
+
+
+	brancoTexture = gl.createTexture();
+	brancoTexture.image = new Image();
+	brancoTexture.image.onload = function () {
+		handleLoadedTexture(brancoTexture)
+	}
+
+	brancoTexture.image.src = "branco.jpg";
+
 }
+
+
+
 
 //----------------------------------------------------------------------------
 
@@ -279,7 +291,8 @@ function drawModel( angleXX, angleYY, angleZZ,
 					sx, sy, sz,
 					tx, ty, tz,
 					mvMatrix,
-					primitiveType ) {
+					primitiveType,
+					texture_id) {
 
     // Pay attention to transformation order !!
     
@@ -319,7 +332,12 @@ function drawModel( angleXX, angleYY, angleZZ,
     gl.vertexAttribPointer(shaderProgram.textureCoordAttribute, cubeVertexTextureCoordBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
     gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, webGLTexture);
+    if (texture_id == 1)
+   		gl.bindTexture(gl.TEXTURE_2D, ramalhoTexture);
+    
+    else if (texture_id == 0)
+   		gl.bindTexture(gl.TEXTURE_2D, brancoTexture);
+
         
     gl.uniform1i(shaderProgram.samplerUniform, 0);
     
@@ -344,17 +362,27 @@ var far = 10;
 
 
 class Cube {
-  constructor(tx, ty, tz,mvMatrix) {
+  constructor(tx, ty, tz,mvMatrix, owner) {
     this.tx = tx;
     this.ty = ty;
     this.tz = tz;
+
+    var id = 3;
+    if (owner == "ramalho")
+    	id = 1;
+
+   	else if(owner == "branco")
+   		id = 0;
+
 
 
     drawModel( -angleXX, angleYY, angleZZ, 
 	           sx, sy, sz,
 	           tx , ty, tz,
 	           mvMatrix,
-	           primitiveType );
+	           primitiveType,
+	           id);
+    
   }
 }
 
@@ -395,185 +423,54 @@ function drawScene() {
 	// And with diferent transformation parameters !!
 	
 	// Call the drawModel function !!
+
+	var possible_values = [-0.5, 0, 0.5]
+
+	for (var i = 0; i < possible_values.length; i++) {
+		for (var j = 0; j < possible_values.length; j++) {
+			for (var k = 0; k < possible_values.length; k++) {
+				if (i == "0")
+				cube_array.push(new Cube(tx + possible_values[i], ty + possible_values[j], tz + possible_values[k], mvMatrix, "ramalho"));
+				else
+				cube_array.push(new Cube(tx + possible_values[i], ty + possible_values[j], tz + possible_values[k], mvMatrix, "branco"));
+
+			}
+		}
+	}
+	/*
 	
-	
-	drawModel( -angleXX, angleYY, angleZZ, 
-	           sx, sy, sz,
-	           tx + 0.5, ty + 0.5, tz+0.5,
-	           mvMatrix,
-	           primitiveType );
-	           	       
-	
-	drawModel( -angleXX, -angleYY, -angleZZ,  // CW rotations
-	           sx, sy, sz,
-	           tx - 0.5, ty + 0.5, tz+0.5,
-	           mvMatrix,
-	           primitiveType );
-	           
-	
-	drawModel( angleXX, angleYY, -angleZZ, 
-	           sx, sy, sz,
-	           tx + 0.5, ty - 0.5, tz+0.5,
-	           mvMatrix,
-	           primitiveType );
-	           	       
-	
-	drawModel( angleXX, -angleYY, angleZZ,  // CW rotations
-	           sx, sy, sz,
-	           tx - 0.5, ty - 0.5, tz+0.5,
-	           mvMatrix,
-	           primitiveType );
+	cube_array.push(new Cube(tx + 0.5, ty + 0.5, tz+0.5, mvMatrix));
+	cube_array.push(new Cube(tx - 0.5, ty + 0.5, tz+0.5, mvMatrix));
+	cube_array.push(new Cube(tx + 0.5, ty - 0.5, tz+0.5, mvMatrix));
+	cube_array.push(new Cube(tx - 0.5, ty - 0.5, tz+0.5, mvMatrix));
+	cube_array.push(new Cube(tx + 0.5, ty + 0.5, tz,	 mvMatrix));
+	cube_array.push(new Cube(tx - 0.5, ty + 0.5, tz,	 mvMatrix));
+	cube_array.push(new Cube(tx + 0.5, ty - 0.5, tz,	 mvMatrix));
+	cube_array.push(new Cube(tx - 0.5, ty - 0.5, tz,	 mvMatrix));
+	cube_array.push(new Cube(tx + 0.5, ty + 0.5, tz-0.5, mvMatrix));
+	cube_array.push(new Cube(tx - 0.5, ty + 0.5, tz-0.5, mvMatrix));
+	cube_array.push(new Cube(tx + 0.5, ty - 0.5, tz-0.5, mvMatrix));
+	cube_array.push(new Cube(tx - 0.5, ty + 0.5, tz-0.5, mvMatrix));
+	cube_array.push(new Cube(tx - 0.5, ty - 0.5, tz-0.5, mvMatrix));
+	cube_array.push(new Cube(tx, ty - 0.5, tz-0.5,		 mvMatrix));
+	cube_array.push(new Cube(tx, ty + 0.5, tz-0.5, mvMatrix));
+	cube_array.push(new Cube(tx, ty , tz-0.5,  mvMatrix));
+	cube_array.push(new Cube(tx, ty - 0.5, tz, mvMatrix));
+	cube_array.push(new Cube(tx, ty + 0.5, tz, mvMatrix));
+	cube_array.push(new Cube(tx, ty , tz-0.5, mvMatrix));
+	cube_array.push(new Cube(tx, ty , tz, mvMatrix));
+	cube_array.push(new Cube(tx, ty , tz-0.5, mvMatrix));
+	cube_array.push(new Cube(tx, ty - 0.5, tz+0.5, mvMatrix));
+	cube_array.push(new Cube(tx, ty + 0.5, tz+0.5, mvMatrix));
+	cube_array.push(new Cube(tx, ty , tz+0.5, mvMatrix));
+	cube_array.push(new Cube(tx - 0.5, ty , tz-0.5, mvMatrix));
+	cube_array.push(new Cube(tx - 0.5, ty , tz, mvMatrix));
+	cube_array.push(new Cube(tx - 0.5, ty , tz+0.5, mvMatrix));
+	cube_array.push(new Cube(tx + 0.5, ty , tz-0.5, mvMatrix));
+	cube_array.push(new Cube(tx + 0.5, ty , tz, mvMatrix));
+	cube_array.push(new Cube(tx + 0.5, ty , tz+0.5, mvMatrix));
 
-	
-	drawModel( -angleXX, angleYY, angleZZ, 
-	           sx, sy, sz,
-	           tx + 0.5, ty + 0.5, tz,
-	           mvMatrix,
-	           primitiveType );
-	           	       
-	
-	drawModel( -angleXX, -angleYY, -angleZZ,  // CW rotations
-	           sx, sy, sz,
-	           tx - 0.5, ty + 0.5, tz,
-	           mvMatrix,
-	           primitiveType );
-	           
-	
-	drawModel( angleXX, angleYY, -angleZZ, 
-	           sx, sy, sz,
-	           tx + 0.5, ty - 0.5, tz,
-	           mvMatrix,
-	           primitiveType );
-	           	       
-	
-	drawModel( angleXX, -angleYY, angleZZ,  // CW rotations
-	           sx, sy, sz,
-	           tx - 0.5, ty - 0.5, tz,
-	           mvMatrix,
-	           primitiveType );
-	           
-	
-	drawModel( -angleXX, angleYY, angleZZ, 
-	           sx, sy, sz,
-	           tx + 0.5, ty + 0.5, tz-0.5,
-	           mvMatrix,
-	           primitiveType );
-	           	       
-
-	drawModel( -angleXX, -angleYY, -angleZZ,  // CW rotations
-	           sx, sy, sz,
-	           tx - 0.5, ty + 0.5, tz-0.5,
-	           mvMatrix,
-	           primitiveType );
-
-	
-	drawModel( angleXX, angleYY, -angleZZ, 
-	           sx, sy, sz,
-	           tx + 0.5, ty - 0.5, tz-0.5,
-	           mvMatrix,
-	           primitiveType );
-	           	       
-	
-	drawModel( angleXX, -angleYY, angleZZ,  // CW rotations
-	           sx, sy, sz,
-	           tx - 0.5, ty - 0.5, tz-0.5,
-	           mvMatrix,
-	           primitiveType );
-    
-	
-	drawModel( angleXX, -angleYY, angleZZ,  // CW rotations
-	           sx, sy, sz,
-	           tx, ty - 0.5, tz-0.5,
-	           mvMatrix,
-	           primitiveType );
-
-
-	drawModel( angleXX, -angleYY, angleZZ,  // CW rotations
-	           sx, sy, sz,
-	           tx, ty + 0.5, tz-0.5,
-	           mvMatrix,
-	           primitiveType );
-
-	drawModel( angleXX, -angleYY, angleZZ,  // CW rotations
-	           sx, sy, sz,
-	           tx, ty , tz-0.5,
-	           mvMatrix,
-	           primitiveType );
-
-	drawModel( angleXX, -angleYY, angleZZ,  // CW rotations
-	           sx, sy, sz,
-	           tx, ty - 0.5, tz,
-	           mvMatrix,
-	           primitiveType );
-
-	drawModel( angleXX, -angleYY, angleZZ,  // CW rotations
-	           sx, sy, sz,
-	           tx, ty + 0.5, tz,
-	           mvMatrix,
-	           primitiveType );
-
-	drawModel( angleXX, -angleYY, angleZZ,  // CW rotations
-	           sx, sy, sz,
-	           tx, ty , tz,
-	           mvMatrix,
-	           primitiveType );
-    
-	drawModel( angleXX, -angleYY, angleZZ,  // CW rotations
-	           sx, sy, sz,
-	           tx, ty - 0.5, tz+0.5,
-	           mvMatrix,
-	           primitiveType );
-
-	drawModel( angleXX, -angleYY, angleZZ,  // CW rotations
-	           sx, sy, sz,
-	           tx, ty + 0.5, tz+0.5,
-	           mvMatrix,
-	           primitiveType );
-
-	drawModel( angleXX, -angleYY, angleZZ,  // CW rotations
-	           sx, sy, sz,
-	           tx, ty , tz+0.5,
-	           mvMatrix,
-	           primitiveType );
-
-	drawModel( angleXX, -angleYY, angleZZ,  // CW rotations
-	           sx, sy, sz,
-	           tx - 0.5, ty , tz-0.5,
-	           mvMatrix,
-	           primitiveType );
-
-	drawModel( angleXX, -angleYY, angleZZ,  // CW rotations
-	           sx, sy, sz,
-	           tx - 0.5, ty , tz,
-	           mvMatrix,
-	           primitiveType );
-    
-	drawModel( angleXX, -angleYY, angleZZ,  // CW rotations
-	           sx, sy, sz,
-	           tx - 0.5, ty , tz+0.5,
-	           mvMatrix,
-	           primitiveType );
-    
-	drawModel( angleXX, -angleYY, angleZZ,  // CW rotations
-	           sx, sy, sz,
-	           tx + 0.5, ty , tz-0.5,
-	           mvMatrix,
-	           primitiveType );
-
-	drawModel( angleXX, -angleYY, angleZZ,  // CW rotations
-	           sx, sy, sz,
-	           tx + 0.5, ty , tz,
-	           mvMatrix,
-	           primitiveType );
-    
-	drawModel( angleXX, -angleYY, angleZZ,  // CW rotations
-	           sx, sy, sz,
-	           tx + 0.5, ty , tz+0.5,
-	           mvMatrix,
-	           primitiveType );
-
-	cube_array.push(new Cube(tx + 0, ty +0, tz+0, mvMatrix));
-	
+	*/
 }
 
 function detect_intersection(x, y){
@@ -586,7 +483,6 @@ function detect_intersection(x, y){
     var y_clicked = (y - rect.top) / rect.height * -2 + 1;
 
     console.log("CLicked: X " + x_clicked + " - Y " + y_clicked);
-  	console
 	for (var i = 0; i < cube_array.length; i++) {
 		var cube = cube_array[i];
 		if (cube.tx + 0.35 > x_clicked && cube.tx - 0.35 < x_clicked && cube.ty + 0.35 > y_clicked && cube.ty - 0.35 < y_clicked){
@@ -1052,9 +948,3 @@ function runWebGL() {
 
 	outputInfos();
 }
-
-
-
-
-
-

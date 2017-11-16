@@ -492,14 +492,19 @@ function detect_intersection(x, y){
     clipFar  = [x_clicked, y_clicked,  far];
     
 
+    vetor = [0, 0,  far-near];
+    
+    console.log("aqui");
+    console.log(mult(matrixGlobal, translationMatrix(x_clicked, y_clicked, 0)));
+
     console.log(clipNear);
     console.log(clipFar);
-	for (var i = 0; i < cube_array.length; i++) {
-        console.log(cube_array.length);
-		var cube = cube_array[i];
-        console.log(mult(matrixGlobal, translationMatrix(cube.tx, cube.ty, cube.tz)));
-
-	}
+//	for (var i = 0; i < cube_array.length; i++) {
+ //       console.log(cube_array.length);
+//		var cube = cube_array[i];
+ //       console.log(mult(matrixGlobal, translationMatrix(cube.tx, cube.ty, cube.tz)));
+//
+//	}
 
 }
 

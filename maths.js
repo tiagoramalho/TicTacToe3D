@@ -472,7 +472,6 @@ function translationMatrix( tx, ty, tz )
 	return m;	
 }
 
-//----------------------------------------------------------------------------
 
 function perspective( fovy, aspect, near, far )
 {

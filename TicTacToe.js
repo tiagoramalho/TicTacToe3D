@@ -341,8 +341,6 @@ var near = 0.05;
 //  variavel far para usar na perspectiva
 var far = 10;
 
-
-
 class Cube {
   constructor(tx, ty, tz,mvMatrix) {
     this.tx = tx;
@@ -572,7 +570,7 @@ function drawScene() {
 	           mvMatrix,
 	           primitiveType );
 
-	cube_array.push(new Cube(tx + 0, ty +0, tz+0, mvMatrix));
+	cube_array.push(new Cube(tx + 0.2, ty +0.2, tz+0.2, mvMatrix));
 	
 }
 
@@ -581,12 +579,22 @@ function detect_intersection(x, y){
 	var canvas = document.getElementById("my-canvas");
     var rect = canvas.getBoundingClientRect();	
     console.log(rect);
-
+    //aqui fico com as coordenadas do click
     var x_clicked = (x - rect.left) / rect.width * 2 - 1;
     var y_clicked = (y - rect.top) / rect.height * -2 + 1;
 
     console.log("CLicked: X " + x_clicked + " - Y " + y_clicked);
-  	console
+
+    //esta e a minha matrix perspetiva
+    pMatrix = perspective( 45, 1, near, far);
+
+    //aqui era algo que estava a ver da net mas nao percebo
+    clipNear = [x_clicked*near , y_clicked*near, -1*near, 1*near];
+    clipFar  = [x_clicked*far, y_clicked*far,  1*far, 1*far];
+
+    console.log(clipNear);
+    console.log(clipFar);
+
 	for (var i = 0; i < cube_array.length; i++) {
 		var cube = cube_array[i];
 		if (cube.tx + 0.35 > x_clicked && cube.tx - 0.35 < x_clicked && cube.ty + 0.35 > y_clicked && cube.ty - 0.35 < y_clicked){

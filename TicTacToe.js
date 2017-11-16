@@ -352,7 +352,7 @@ class Cube {
 
     drawModel( -angleXX, angleYY, angleZZ, 
 	           sx, sy, sz,
-	           tx + 0.2, ty + 0.2, tz+0.2,
+	           tx , ty, tz,
 	           mvMatrix,
 	           primitiveType );
   }
@@ -572,19 +572,24 @@ function drawScene() {
 	           mvMatrix,
 	           primitiveType );
 
-	cube_array.push(new Cube(tx + 0.1, ty +0.1, tz+0.1, mvMatrix));
+	cube_array.push(new Cube(tx + 0, ty +0, tz+0, mvMatrix));
 	
 }
 
-function detect_intersection(x_clicked, y_clicked){
+function detect_intersection(x, y){
 
-	x_clicked = x_clicked / gl.canvas.width  *  2 - 1;
-  	y_clicked = y_clicked / gl.canvas.height * -2 + 1;
+	var canvas = document.getElementById("my-canvas");
+    var rect = canvas.getBoundingClientRect();	
+    console.log(rect);
+
+    var x_clicked = (x - rect.left) / rect.width * 2 - 1;
+    var y_clicked = (y - rect.top) / rect.height * -2 + 1;
+
     console.log("CLicked: X " + x_clicked + " - Y " + y_clicked);
-  	
+  	console
 	for (var i = 0; i < cube_array.length; i++) {
 		var cube = cube_array[i];
-		if (cube.tx + 0.35 > x_clicked && cube.tx - 0.35 < x_clicked && cube.ty + 0.35 > y_clicked && cube.ty - 0.35 < x_clicked){
+		if (cube.tx + 0.35 > x_clicked && cube.tx - 0.35 < x_clicked && cube.ty + 0.35 > y_clicked && cube.ty - 0.35 < y_clicked){
 			console.log("Carregaste num cubo");
 		}
 	}
@@ -729,7 +734,6 @@ function handleMouseDown(event) {
   
     lastMouseY = event.clientY;
 
-    detect_intersection(lastMouseX, lastMouseY)
 
 
 
@@ -742,7 +746,7 @@ function handleMouseUp(event) {
     var newY = event.clientY;
     // se entrar no if nao se moveu logo se clicou num cubo e a jogada
     if(moveImage == false && newX == lastMouseX && newY == lastMouseY){
-        clickCubo(newX, newY);
+        detect_intersection(newX, newY);
     }
     mouseDown = false;
 }
@@ -772,23 +776,6 @@ function handleMouseMove(event) {
     
     lastMouseY = newY;
   }
-//--------------------------------------------------------------------------- 
-//Calculo para chegar ao cubo
-function clickCubo(x, y) {
-
-	var canvas = document.getElementById("my-canvas");
-    var rect = canvas.getBoundingClientRect();	
-    console.log(rect);
-
-    pointX = (x-rect.left) / rect.width * 2 - 1;
-    pointY = (y- rect.top) / rect.height * -2 + 1;
-
-    console.log("x--> " + pointX);
-    console.log("y--> " + pointY);
-
-
-}
-//----------------------------------------------------------------------------
 
 // Timer
 

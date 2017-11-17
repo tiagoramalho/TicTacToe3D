@@ -79,6 +79,8 @@ var rotationZZ_SPEED = 1;
 
 var cube_array;
 
+var player = "ramalho";
+
 
  // NEW - GLOBAL Animation controls
 
@@ -193,13 +195,24 @@ var cubeVertexIndices = [
             20, 21, 22,   20, 22, 23  // Left face
 ];
 
+var game_matrix = new Array();
+
+for (var i = 0; i < 3; i++) {
+	game_matrix[i]=new Array();
+	for (var j = 0; j < 3; j++) {
+		game_matrix[i][j]=new Array();
+		for (var k = 0; k < 3; k++) {
+			game_matrix[i][j][k] = 0;
+		}
+	}
+}
+
+
+function evaluate_win(){
 
 
 
-    
-
-
-
+}
 
 
 //----------------------------------------------------------------------------
@@ -247,6 +260,14 @@ function initTexture() {
 
 	brancoTexture.image.src = "branco.jpg";
 
+
+	neutralTexture = gl.createTexture();
+	neutralTexture.image = new Image();
+	neutralTexture.image.onload = function () {
+		handleLoadedTexture(neutralTexture)
+	}
+
+	neutralTexture.image.src = "NeHe.gif";
 }
 
 
@@ -338,6 +359,9 @@ function drawModel( angleXX, angleYY, angleZZ,
     else if (texture_id == 0)
    		gl.bindTexture(gl.TEXTURE_2D, brancoTexture);
 
+   	else
+   		gl.bindTexture(gl.TEXTURE_2D, neutralTexture);
+
         
     gl.uniform1i(shaderProgram.samplerUniform, 0);
     
@@ -373,8 +397,6 @@ class Cube {
 
    	else if(owner == "branco")
    		id = 0;
-
-
 
     drawModel( -angleXX, angleYY, angleZZ, 
 	           sx, sy, sz,
@@ -428,56 +450,21 @@ function drawScene() {
 	cube_array = [];
 	for (var i = 0; i < possible_values.length; i++) {
 		for (var j = 0; j < possible_values.length; j++) {
-			for (var k = 0; k < possible_values.length; k++) {
-				if (i == "0")
-				cube_array.push(new Cube(tx + possible_values[i], ty + possible_values[j], tz + possible_values[k], mvMatrix, "ramalho"));
-				else
-				cube_array.push(new Cube(tx + possible_values[i], ty + possible_values[j], tz + possible_values[k], mvMatrix, "branco"));
-
-			}
+			for (var k = 0; k < possible_values.length; k++)
+				cube_array.push(new Cube(tx + possible_values[i],
+										 ty + possible_values[j],
+										 tz + possible_values[k],
+										 mvMatrix,
+										 game_matrix[i][j][k])
+				);
 		}
 	}
-	/*
-	
-	cube_array.push(new Cube(tx + 0.5, ty + 0.5, tz+0.5, mvMatrix));
-	cube_array.push(new Cube(tx - 0.5, ty + 0.5, tz+0.5, mvMatrix));7
-	cube_array.push(new Cube(tx + 0.5, ty - 0.5, tz+0.5, mvMatrix));
-	cube_array.push(new Cube(tx - 0.5, ty - 0.5, tz+0.5, mvMatrix));
-	cube_array.push(new Cube(tx + 0.5, ty + 0.5, tz,	 mvMatrix));
-	cube_array.push(new Cube(tx - 0.5, ty + 0.5, tz,	 mvMatrix));
-	cube_array.push(new Cube(tx + 0.5, ty - 0.5, tz,	 mvMatrix));
-	cube_array.push(new Cube(tx - 0.5, ty - 0.5, tz,	 mvMatrix));
-	cube_array.push(new Cube(tx + 0.5, ty + 0.5, tz-0.5, mvMatrix));
-	cube_array.push(new Cube(tx - 0.5, ty + 0.5, tz-0.5, mvMatrix));
-	cube_array.push(new Cube(tx + 0.5, ty - 0.5, tz-0.5, mvMatrix));
-	cube_array.push(new Cube(tx - 0.5, ty + 0.5, tz-0.5, mvMatrix));
-	cube_array.push(new Cube(tx - 0.5, ty - 0.5, tz-0.5, mvMatrix));
-	cube_array.push(new Cube(tx, ty - 0.5, tz-0.5,		 mvMatrix));
-	cube_array.push(new Cube(tx, ty + 0.5, tz-0.5, mvMatrix));
-	cube_array.push(new Cube(tx, ty , tz-0.5,  mvMatrix));
-	cube_array.push(new Cube(tx, ty - 0.5, tz, mvMatrix));
-	cube_array.push(new Cube(tx, ty + 0.5, tz, mvMatrix));
-	cube_array.push(new Cube(tx, ty , tz-0.5, mvMatrix));
-	cube_array.push(new Cube(tx, ty , tz, mvMatrix));
-	cube_array.push(new Cube(tx, ty , tz-0.5, mvMatrix));
-	cube_array.push(new Cube(tx, ty - 0.5, tz+0.5, mvMatrix));
-	cube_array.push(new Cube(tx, ty + 0.5, tz+0.5, mvMatrix));
-	cube_array.push(new Cube(tx, ty , tz+0.5, mvMatrix));
-	cube_array.push(new Cube(tx - 0.5, ty , tz-0.5, mvMatrix));
-	cube_array.push(new Cube(tx - 0.5, ty , tz, mvMatrix));
-	cube_array.push(new Cube(tx - 0.5, ty , tz+0.5, mvMatrix));
-	cube_array.push(new Cube(tx + 0.5, ty , tz-0.5, mvMatrix));
-	cube_array.push(new Cube(tx + 0.5, ty , tz, mvMatrix));
-	cube_array.push(new Cube(tx + 0.5, ty , tz+0.5, mvMatrix));
-
-	*/
 }
 
 function detect_intersection(x, y){
 
 	var canvas = document.getElementById("my-canvas");
     var rect = canvas.getBoundingClientRect();	
-    console.log(rect);
 
     var x_clicked = (x - rect.left) / rect.width * 2 - 1;
     var y_clicked = (y - rect.top) / rect.height * -2 + 1;
@@ -635,6 +622,17 @@ function handleMouseDown(event) {
 
 }
 
+function change_player() {
+	if (player == "ramalho"){
+		player = "branco";
+	}
+	else if (player == "branco"){
+		player = "ramalho";
+	}
+	else
+		console.log("problemas");
+}
+
 function handleMouseUp(event) {
 
     var newX = event.clientX;
@@ -643,6 +641,19 @@ function handleMouseUp(event) {
     // se entrar no if nao se moveu logo se clicou num cubo e a jogada
     if(moveImage == false && newX == lastMouseX && newY == lastMouseY){
         detect_intersection(newX, newY);
+	loop1:
+		for (var i = 0; i < game_matrix.length; i++) {
+			for (var j = 0; j < game_matrix[i].length; j++) {
+				for (var k = 0; k < game_matrix[j].length; k++) {
+					if (game_matrix[i][j][k] == 0){
+						game_matrix[i][j][k] = player;
+						change_player();
+						break loop1;
+
+					}
+				}
+			}
+		}
     }
     mouseDown = false;
 }

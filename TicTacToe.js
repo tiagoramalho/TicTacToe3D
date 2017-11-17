@@ -9,7 +9,7 @@
 // Global Variables
 //
 
-
+var matrixGlobal; 
 
 var gl = null; // WebGL context
 
@@ -324,6 +324,7 @@ function drawModel( angleXX, angleYY, angleZZ,
     tmp = mult( rotationXXMatrix( globalAngleXX), rotationYYMatrix( globalAngleYY ));
     mvMatrix = mult( translationMatrix( 0, 0, globalTz), tmp); 
 
+    matrixGlobal = mvMatrix;
 
 	mvMatrix = mult( mvMatrix, translationMatrix( tx, ty, tz ) );
 						 
@@ -383,8 +384,6 @@ var near = 0.05;
 //  variavel far para usar na perspectiva
 var far = 10;
 
-
-
 class Cube {
   constructor(tx, ty, tz,mvMatrix, owner) {
     this.tx = tx;
@@ -415,8 +414,8 @@ function drawScene() {
 	
 	var pMatrix;
 	
-	var mvMatrix = mat4();
 	
+    var mvMatrix = mat4();
 	// Clearing with the background color
 	
 	gl.clear(gl.COLOR_BUFFER_BIT);
@@ -466,16 +465,35 @@ function detect_intersection(x, y){
 	var canvas = document.getElementById("my-canvas");
     var rect = canvas.getBoundingClientRect();	
 
+    //aqui fico com as coordenadas do click
+    
     var x_clicked = (x - rect.left) / rect.width * 2 - 1;
     var y_clicked = (y - rect.top) / rect.height * -2 + 1;
 
     console.log("CLicked: X " + x_clicked + " - Y " + y_clicked);
-	for (var i = 0; i < cube_array.length; i++) {
-		var cube = cube_array[i];
-		if (cube.tx + 0.35 > x_clicked && cube.tx - 0.35 < x_clicked && cube.ty + 0.35 > y_clicked && cube.ty - 0.35 < y_clicked){
-			console.log("Carregaste num cubo");
-		}
-	}
+
+    //esta e a minha matrix perspetiva
+    pMatrix = perspective( 45, 1, near, far);
+    console.log(matrixGlobal);
+
+    //temos de percorrer estes pontos a ver se intereseta em algum cubo
+    clipNear = [x_clicked , y_clicked, near];
+    clipFar  = [x_clicked, y_clicked,  far];
+    
+
+    vetor = [0, 0,  far-near];
+    
+    console.log("aqui");
+    console.log(mult(matrixGlobal, translationMatrix(x_clicked, y_clicked, 0)));
+
+    console.log(clipNear);
+    console.log(clipFar);
+//	for (var i = 0; i < cube_array.length; i++) {
+ //       console.log(cube_array.length);
+//		var cube = cube_array[i];
+ //       console.log(mult(matrixGlobal, translationMatrix(cube.tx, cube.ty, cube.tz)));
+//
+//	}
 
 }
 

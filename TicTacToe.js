@@ -210,7 +210,62 @@ for (var i = 0; i < 3; i++) {
 
 function evaluate_win(){
 
+	// TEsta LINHAS
 
+	var winner = false;
+
+	for (var i = 0; i < game_matrix.length; i++) {
+		for (var j = 0; j < game_matrix[i].length; j++) {
+			for (var k = 0; k < game_matrix[i][j].length; k++) {
+				if (game_matrix[i][j][0] != 0 && game_matrix[i][j][k] == game_matrix[i][j][0]){
+					console.log(game_matrix[i][j][k]);
+					if(k == game_matrix[i][j].length-1)
+						winner = game_matrix[i][j][k];
+				}
+
+				else
+					break
+			}
+		}
+	}
+	if (winner != false)
+		return winner
+
+
+
+	for (var i = 0; i < game_matrix.length; i++) {
+		for (var j = 0; j < game_matrix[i].length; j++) {
+			for (var k = 0; k < game_matrix[i][j].length; k++) {
+				if (game_matrix[i][0][k] != 0 && game_matrix[i][j][k] == game_matrix[i][0][k])
+					if(j == game_matrix[i][j].length-1)
+						winner = game_matrix[i][j][k];
+				else
+					break
+			}
+		}
+	}
+	if (winner != false)
+		return winner
+
+
+
+
+	for (var i = 0; i < game_matrix.length; i++) {
+		for (var j = 0; j < game_matrix[i].length; j++) {
+			for (var k = 0; k < game_matrix[i][j].length; k++) {
+				if (game_matrix[0][j][k] != 0 && game_matrix[i][j][k] == game_matrix[0][j][k])
+					if(i == game_matrix[i][j].length-1)
+						winner = game_matrix[i][j][k];
+				else
+					break
+			}
+		}
+	}
+	if (winner != false)
+		return winner
+
+
+	return winner
 
 }
 
@@ -662,10 +717,10 @@ function handleMouseUp(event) {
 	loop1:
 		for (var i = 0; i < game_matrix.length; i++) {
 			for (var j = 0; j < game_matrix[i].length; j++) {
-				for (var k = 0; k < game_matrix[j].length; k++) {
-					if (game_matrix[i][j][k] == 0){
-						game_matrix[i][j][k] = player;
-						change_player();
+				for (var k = 0; k < game_matrix[i][j].length; k++) {
+					if (game_matrix[j][2][0] == 0){
+						game_matrix[j][2][0] = player;
+						//change_player();
 						break loop1;
 
 					}
@@ -673,6 +728,7 @@ function handleMouseUp(event) {
 			}
 		}
     }
+    console.log("Winner: "+evaluate_win());
     mouseDown = false;
 }
 

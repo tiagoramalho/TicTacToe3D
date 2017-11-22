@@ -331,7 +331,6 @@ function initTexture() {
 //----------------------------------------------------------------------------
 
 // Handling the Buffers
-var bufferteste;
 function initBuffers() {	
 	
 	// Coordinates
@@ -358,11 +357,7 @@ function initBuffers() {
     cubeVertexIndexBuffer.itemSize = 1;
     cubeVertexIndexBuffer.numItems = 36;
 
-    bufferteste = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, bufferteste);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([0.5, 0.5, 0.05, 1.5, 1.5, 10]), gl.STATIC_DRAW);
-    bufferteste.itemSize = 3;
-    bufferteste.numItems= 2;
+
 
 }
 
@@ -429,8 +424,7 @@ function drawModel( angleXX, angleYY, angleZZ,
 
 	// Drawing the triangles --- NEW --- DRAWING ELEMENTS 
 	gl.drawElements(gl.TRIANGLES, cubeVertexIndexBuffer.numItems, gl.UNSIGNED_SHORT, 0);	
-    gl.bindBuffer(gl.ARRAY_BUFFER, bufferteste);
-    gl.drawArrays(gl.GL_LINES, 0, 2);
+   
 }
 
 //----------------------------------------------------------------------------
@@ -516,6 +510,7 @@ function drawScene() {
 				);
 		}
 	}
+	
 }
 
 function detect_intersection(x, y){
@@ -745,7 +740,6 @@ function handleMouseMove(event) {
 // Timer
 
 function tick() {
-	
 	requestAnimFrame(tick);
 	
 	// NEW --- Processing keyboard events 

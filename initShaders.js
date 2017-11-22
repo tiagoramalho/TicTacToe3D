@@ -50,8 +50,8 @@ function getShader(gl, id) {
 // Initializing the shader program
 
 function initShadersColor( gl ) {
-	var fragmentShader = getShader(gl, "shader-fs");
-	var vertexShader = getShader(gl, "shader-vs");
+	var fragmentShader = getShader(gl, "shader-fs2");
+	var vertexShader = getShader(gl, "shader-vs2");
 
 	var shaderProgram = gl.createProgram();
 	gl.attachShader(shaderProgram, vertexShader);

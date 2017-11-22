@@ -14,156 +14,22 @@
 //----------------------------------------------------------------------------
 //
 // Global Variables
-//
-var matrixGlobal; 
-
-var gl = null; // WebGL context
-
-var shaderProgram = null; 
-
-// NEW --- Buffers
-
-var cubeVertexPositionBuffer = null;
-	
-var cubeVertexColorBuffer = null;
-
-var cubeVertexIndexBuffer = null;
-
-// The global transformation parameters
-
-// The translation vector
-
-var tx = 0.0;
-
-var ty = 0.0;
-
-var tz = 0.0;
-
-// The GLOBAL transformation parameters
-
-var globalAngleYY = 0.0;
-
-var globalAngleXX = 0.0;
-
-var globalTz = 0;
-
-// The rotation angles in degrees
-
-var angleXX = 0.0;
-
-var angleYY = 0.0;
-
-var angleZZ = 0.0;
-
-// The scaling factors
-
-var sx = 0.25;
-
-var sy = 0.25;
-
-var sz = 0.25;
-
-// NEW - Animation controls
-
-var rotationXX_ON = 1;
-
-var rotationXX_DIR = 1;
-
-var rotationXX_SPEED = 1;
- 
-var rotationYY_ON = 1;
-
-var rotationYY_DIR = 1;
-
-var rotationYY_SPEED = 1;
- 
-var rotationZZ_ON = 1;
-
-var rotationZZ_DIR = 1;
-
-var rotationZZ_SPEED = 1;
-
-var cube_array;
-
-var player = "ramalho";
-
-
- // NEW - GLOBAL Animation controls
-
-var globalRotationYY_ON = 0;
-
-var globalRotationYY_DIR = 1;
-
-var globalRotationYY_SPEED = 1;
-// To allow choosing the way of drawing the model triangles
-
-var primitiveType = null;
  
  
 // From learningwebgl.com
 
 // NEW --- Storing the vertices defining the cube faces
-var debug = true;
-vertices = [
-            // Front face
-            -0.35, -0.35,  0.35,
-             0.35, -0.35,  0.35,
-             0.35,  0.35,  0.35,
-            -0.35,  0.35,  0.35,
-
-            // Back face
-            -0.35, -0.35, -0.35,
-            -0.35,  0.35, -0.35,
-             0.35,  0.35, -0.35,
-             0.35, -0.35, -0.35,
-
-            // Top face
-            -0.35,  0.35, -0.35,
-            -0.35,  0.35,  0.35,
-             0.35,  0.35,  0.35,
-             0.35,  0.35, -0.35,
-
-            // Bottom face
-            -0.35, -0.35, -0.35,
-             0.35, -0.35, -0.35,
-             0.35, -0.35,  0.35,
-            -0.35, -0.35,  0.35,
-
-            // Right face
-             0.35, -0.35, -0.35,
-             0.35,  0.35, -0.35,
-             0.35,  0.35,  0.35,
-             0.35, -0.35,  0.35,
-
-            // Left face
-            -0.35, -0.35, -0.35,
-            -0.35, -0.35,  0.35,
-            -0.35,  0.35,  0.35,
-            -0.35,  0.35, -0.35
-];
-
-// Vertex indices defining the triangles
-        
-var cubeVertexIndices = [
-
-            0, 1, 2,      0, 2, 3,    // Front face
-
-            4, 5, 6,      4, 6, 7,    // Back face
-
-            8, 9, 10,     8, 10, 11,  // Top face
-
-            12, 13, 14,   12, 14, 15, // Bottom face
-
-            16, 17, 18,   16, 18, 19, // Right face
-
-            20, 21, 22,   20, 22, 23  // Left face
-];
          
 // And their colour
 
-var colors = [
+var primitiveType2 = null;
 
-		 // FRONT FACE - RED
+var gl2 = null; // WebGL context
+
+var shaderProgram2 = null; 
+
+var colors = [
+// FRONT FACE - RED
 		 	
 		 1.00,  0.00,  0.00,
 		 
@@ -224,81 +90,21 @@ var colors = [
 		 
 		 0.00,  1.00,  0.00,
 
-		 0.00,  1.00,  0.00,
-];
-var game_matrix = new Array();
+		 0.00,  1.00,  0.00,];
 
-for (var i = 0; i < 3; i++) {
-	game_matrix[i]=new Array();
-	for (var j = 0; j < 3; j++) {
-		game_matrix[i][j]=new Array();
-		for (var k = 0; k < 3; k++) {
-			game_matrix[i][j][k] = 0;
-		}
-	}
-}
+var cubeVertexPositionBuffer2 = null;
+
+var cubeVertexIndexBuffer2 = null;
+
+var cubeVertexColorBuffer = null;
+
+random_colors=[];
 
 
-function evaluate_win(){
+//for (var i = 0; i < .length; i++) {
+//	[i]
+//}
 
-	// TEsta LINHAS
-
-	var winner = false;
-
-	for (var i = 0; i < game_matrix.length; i++) {
-		for (var j = 0; j < game_matrix[i].length; j++) {
-			for (var k = 0; k < game_matrix[i][j].length; k++) {
-				if (game_matrix[i][j][0] != 0 && game_matrix[i][j][k] == game_matrix[i][j][0]){
-					console.log(game_matrix[i][j][k]);
-					if(k == game_matrix[i][j].length-1)
-						winner = game_matrix[i][j][k];
-				}
-
-				else
-					break
-			}
-		}
-	}
-	if (winner != false)
-		return winner
-
-
-
-	for (var i = 0; i < game_matrix.length; i++) {
-		for (var j = 0; j < game_matrix[i].length; j++) {
-			for (var k = 0; k < game_matrix[i][j].length; k++) {
-				if (game_matrix[i][0][k] != 0 && game_matrix[i][j][k] == game_matrix[i][0][k])
-					if(j == game_matrix[i][j].length-1)
-						winner = game_matrix[i][j][k];
-				else
-					break
-			}
-		}
-	}
-	if (winner != false)
-		return winner
-
-
-
-
-	for (var i = 0; i < game_matrix.length; i++) {
-		for (var j = 0; j < game_matrix[i].length; j++) {
-			for (var k = 0; k < game_matrix[i][j].length; k++) {
-				if (game_matrix[0][j][k] != 0 && game_matrix[i][j][k] == game_matrix[0][j][k])
-					if(i == game_matrix[i][j].length-1)
-						winner = game_matrix[i][j][k];
-				else
-					break
-			}
-		}
-	}
-	if (winner != false)
-		return winner
-
-
-	return winner
-
-}
 
 //----------------------------------------------------------------------------
 //
@@ -312,42 +118,41 @@ function evaluate_win(){
 
 // Handling the Vertex and the Color Buffers
 
-function initBuffers() {	
+function initBuffers2() {	
 	
 	// Coordinates
-		
-	cubeVertexPositionBuffer = gl.createBuffer();
-	gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexPositionBuffer);
-	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-	cubeVertexPositionBuffer.itemSize = 3;
-	cubeVertexPositionBuffer.numItems = vertices.length / 3;			
+	cubeVertexPositionBuffer2 = gl2.createBuffer();
+	gl2.bindBuffer(gl2.ARRAY_BUFFER, cubeVertexPositionBuffer2);
+	gl2.bufferData(gl2.ARRAY_BUFFER, new Float32Array(vertices), gl2.STATIC_DRAW);
+	cubeVertexPositionBuffer2.itemSize = 3;
+	cubeVertexPositionBuffer2.numItems = vertices.length / 3;			
 
 	// Colors
-		
-	cubeVertexColorBuffer = gl.createBuffer();
-	gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexColorBuffer);
-	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
+
+
+	cubeVertexColorBuffer = gl2.createBuffer();
+	gl2.bindBuffer(gl2.ARRAY_BUFFER, cubeVertexColorBuffer);
+	gl2.bufferData(gl2.ARRAY_BUFFER, new Float32Array(colors), gl2.STATIC_DRAW);
 	cubeVertexColorBuffer.itemSize = 3;
 	cubeVertexColorBuffer.numItems = vertices.length / 3;			
 
 	// Vertex indices
 	
-    cubeVertexIndexBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeVertexIndexBuffer);
-    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(cubeVertexIndices), gl.STATIC_DRAW);
-    cubeVertexIndexBuffer.itemSize = 1;
-    cubeVertexIndexBuffer.numItems = 36;
+    cubeVertexIndexBuffer2 = gl2.createBuffer();
+    gl2.bindBuffer(gl2.ELEMENT_ARRAY_BUFFER, cubeVertexIndexBuffer2);
+    gl2.bufferData(gl2.ELEMENT_ARRAY_BUFFER, new Uint16Array(cubeVertexIndices), gl2.STATIC_DRAW);
+    cubeVertexIndexBuffer2.itemSize = 1;
+    cubeVertexIndexBuffer2.numItems = 36;
 }
 
 //----------------------------------------------------------------------------
 
 //  Drawing the model
 
-function drawModel( angleXX, angleYY, angleZZ, 
+function drawModel2( angleXX, angleYY, angleZZ, 
 					sx, sy, sz,
 					tx, ty, tz,
-					mvMatrix,
-					primitiveType ) {
+					mvMatrix) {
 
     // Pay attention to transformation order !!
 	tmp = mult( rotationXXMatrix( globalAngleXX), rotationYYMatrix( globalAngleYY ));
@@ -367,65 +172,51 @@ function drawModel( angleXX, angleYY, angleZZ,
 						 
 	// Passing the Model View Matrix to apply the current transformation
 	
-	var mvUniform = gl.getUniformLocation(shaderProgram, "uMVMatrix");
+	var mvUniform = gl2.getUniformLocation(shaderProgram2, "uMVMatrix");
 	
-	gl.uniformMatrix4fv(mvUniform, false, new Float32Array(flatten(mvMatrix)));
+	gl2.uniformMatrix4fv(mvUniform, false, new Float32Array(flatten(mvMatrix)));
 
     // Passing the buffers
     	
-	gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexPositionBuffer);
+	gl2.bindBuffer(gl2.ARRAY_BUFFER, cubeVertexPositionBuffer2);
     
-    gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, cubeVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
+    gl2.vertexAttribPointer(shaderProgram2.vertexPositionAttribute, cubeVertexPositionBuffer2.itemSize, gl2.FLOAT, false, 0, 0);
 
-	gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexColorBuffer);
+	gl2.bindBuffer(gl2.ARRAY_BUFFER, cubeVertexColorBuffer);
     
-    gl.vertexAttribPointer(shaderProgram.vertexColorAttribute, cubeVertexColorBuffer.itemSize, gl.FLOAT, false, 0, 0);
+    gl2.vertexAttribPointer(shaderProgram2.vertexColorAttribute, cubeVertexColorBuffer.itemSize, gl2.FLOAT, false, 0, 0);
 
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeVertexIndexBuffer);
+    gl2.bindBuffer(gl2.ELEMENT_ARRAY_BUFFER, cubeVertexIndexBuffer2);
 
 	// Drawing the triangles --- NEW --- DRAWING ELEMENTS 
 	
-	gl.drawElements(gl.TRIANGLES, cubeVertexIndexBuffer.numItems, gl.UNSIGNED_SHORT, 0);	
+	gl2.drawElements(gl2.TRIANGLES, cubeVertexIndexBuffer2.numItems, gl2.UNSIGNED_SHORT, 0);	
 }
 
 //----------------------------------------------------------------------------
 
-//  Drawing the 3D scene
-//  variavel near para usar na perspectiva
-var near = 0.05;
-//
-//  variavel far para usar na perspectiva
-var far = 10;
-
-class Cube {
-  constructor(tx, ty, tz,mvMatrix, owner) {
+class Cube2 {
+  constructor(tx, ty, tz,mvMatrix) {
     this.tx = tx;
     this.ty = ty;
     this.tz = tz;
 
-    var id = 3;
-    if (owner == "ramalho")
-    	id = 1;
 
-   	else if(owner == "branco")
-   		id = 0;
 
-    drawModel( -angleXX, angleYY, angleZZ, 
+    drawModel2( -angleXX, angleYY, angleZZ, 
 	           sx, sy, sz,
 	           tx , ty, tz,
-	           mvMatrix,
-	           primitiveType,
-	           id);
+	           mvMatrix);
     
   }
 }
 
 
-cube_array = new Array();
+cube_array2 = new Array();
 
 //  Drawing the 3D scene
 
-function drawScene() {
+function drawScene2() {
 	
 	var pMatrix;
 	
@@ -433,7 +224,7 @@ function drawScene() {
 	
 	// Clearing with the background color
 	
-	gl.clear(gl.COLOR_BUFFER_BIT);
+	gl2.clear(gl2.COLOR_BUFFER_BIT);
 	
 	// NEW --- Computing the Projection Matrix
 	
@@ -450,9 +241,9 @@ function drawScene() {
 
 	// Passing the Projection Matrix to apply the current projection
 	
-	var pUniform = gl.getUniformLocation(shaderProgram, "uPMatrix");
+	var pUniform = gl2.getUniformLocation(shaderProgram2, "uPMatrix");
 	
-	gl.uniformMatrix4fv(pUniform, false, new Float32Array(flatten(pMatrix)));
+	gl2.uniformMatrix4fv(pUniform, false, new Float32Array(flatten(pMatrix)));
 	
 	// NEW --- Instantianting the same model more than once !!
 	
@@ -460,19 +251,27 @@ function drawScene() {
 	
 	// Call the drawModel function !!
 	var possible_values = [-0.5, 0, 0.5]
-	cube_array = [];
+	cube_array2 = [];
+	colors=[];
+
+	var number = 0;
+
 	for (var i = 0; i < possible_values.length; i++) {
 		for (var j = 0; j < possible_values.length; j++) {
 			for (var k = 0; k < possible_values.length; k++)
-				cube_array.push(new Cube(tx + possible_values[i],
-										 ty + possible_values[j],
-										 tz + possible_values[k],
-										 mvMatrix,
-										 game_matrix[i][j][k])
+
+
+				cube_array2.push(new Cube2( tx + possible_values[i],
+										 	ty + possible_values[j],
+										 	tz + possible_values[k],
+										 	mvMatrix,
+										 	random_colors[number])
 				);
+				number++;
+
 		}
 	}
-	
+
 	           
 }
 
@@ -483,9 +282,8 @@ function drawScene() {
 
 // Animation --- Updating transformation parameters
 
-var lastTime = 0;
 
-function animate() {
+function animate2() {
 	
 	var timeNow = new Date().getTime();
 	
@@ -517,32 +315,21 @@ function animate() {
 }
 
 
-function change_player() {
-	if (player == "ramalho"){
-		player = "branco";
-	}
-	else if (player == "branco"){
-		player = "ramalho";
-	}
-	else
-		console.log("problemas");
-}
-
-
-
 // Timer
 
-function tick() {
+function tick2() {
 	
-	requestAnimFrame(tick);
+	requestAnimFrame(tick2);
 	
 	// NEW --- Processing keyboard events 
 	
 	handleKeys();
 	
-	drawScene();
+	drawScene2();
 	
-	animate();
+	animate2();
+	
+
 }
 
 
@@ -553,8 +340,8 @@ function tick() {
 //  User Interaction
 //
 
-function outputInfos(){
-		
+function outputInfos2(){
+	
 }
 
 //----------------------------------------------------------------------------
@@ -564,14 +351,14 @@ function outputInfos(){
 // WebGL Initialization
 //
 
-function initWebGL( canvas ) {
+function initWebGL2( canvas ) {
 	try {
 		
 		// Create the WebGL context
 		
 		// Some browsers still need "experimental-webgl"
 		
-		gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+		gl2 = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
 		
 		// DEFAULT: The viewport occupies the whole canvas 
 		
@@ -579,38 +366,38 @@ function initWebGL( canvas ) {
 		
 		// NEW - Drawing the triangles defining the model
 		
-		primitiveType = gl.TRIANGLES;
+		primitiveType2 = gl2.TRIANGLES;
 		
 		// DEFAULT: The Depth-Buffer is DISABLED
 		
 		// Enable it !
 		
-		gl.enable( gl.DEPTH_TEST );
+		gl2.enable( gl2.DEPTH_TEST );
 		
 	} catch (e) {
+
 	}
-	if (!gl) {
+	if (!gl2) {
 		alert("Could not initialise WebGL, sorry! :-(");
 	}        
 }
 
 //----------------------------------------------------------------------------
 
-function runWebGL() {
+function runWebGL2() {
 	
 	var canvas = document.getElementById("my-canvas2");
+	initWebGL2( canvas );
 	
-	initWebGL( canvas );
+	shaderProgram2 = initShadersColor( gl2 );
+	
+	initBuffers2();
+	
+	tick2();		// A timer controls the rendering / animation    
 
-	shaderProgram = initShadersColor( gl );
+	outputInfos2();
 	
-	setEventListeners( canvas );
-	
-	initBuffers();
-	
-	tick();		// A timer controls the rendering / animation    
 
-	outputInfos();
 }
 
 

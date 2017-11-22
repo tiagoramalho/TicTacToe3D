@@ -491,3 +491,341 @@ function perspective( fovy, aspect, near, far )
 }
 
 
+function normalize( v )
+{
+    var squaresSum = v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
+    
+    var norm = Math.sqrt( squaresSum );
+    
+    v[0] /= norm;
+    
+    v[1] /= norm;
+    
+    v[2] /= norm;
+}
+
+//----------------------------------------------------------------------------
+
+// NEW --- Symmetric vector
+
+function symmetric( v )
+{
+    var result = vec3();
+    
+    for( i = 0; i < 3; i++ ) {
+        
+        result[i] = - v[i];
+    }
+        
+    return result;
+}
+
+//----------------------------------------------------------------------------
+
+// NEW --- Dot product
+
+function dotProduct( v1, v2 )
+{
+    var result = 0.0;
+    
+    for( i = 0; i < 3; i++ ) {
+        
+        result += v1[i] * v2[i];
+    }
+        
+    return result;
+}
+
+//----------------------------------------------------------------------------
+
+// NEW --- Vector product
+
+function vectorProduct( v1, v2 )
+{
+    var res = vec3();
+
+	res[0] = v1[1] * v2[2] - v1[2] * v2[1];
+
+	res[1] = - ( v1[0] * v2[2] - v1[2] * v2[0] );
+
+	res[2] = v1[0] * v2[1] - v1[1] * v2[0];
+
+	return res;
+}
+
+//----------------------------------------------------------------------------
+
+// NEW --- Compute unit normal vector to triangle defined by p1, p2 and p3 (CCW)
+
+function computeNormalVector( p0, p1, p2 )
+{
+	var v1 = vec3();
+
+	var v2 = vec3();
+
+	var result = vec3();
+
+    v1[0] = p1[0] - p0[0];
+
+    v1[1] = p1[1] - p0[1];
+
+    v1[2] = p1[2] - p0[2];
+
+    v2[0] = p2[0] - p0[0];
+
+    v2[1] = p2[1] - p0[1];
+
+    v2[2] = p2[2] - p0[2];
+
+    result = vectorProduct( v1, v2 );
+
+    normalize( result );
+
+    return result;
+}
+
+//----------------------------------------------------------------------------
+
+// NEW --- Multiplying using homogeneous coordinates
+
+function multiplyPointByMatrix( m, p )
+{
+	var result = vec4();
+	
+	for( var i = 0; i < 4; i++ ) {
+		
+		for( var j = 0; j < 4; j++ ) {
+		
+				result[i] += m[i][j] * p[j];
+		}
+	}
+	
+	return result;
+}
+
+function multiplyVectorByMatrix( m, p )
+{
+	var result = vec4();
+	
+	for( var i = 0; i < 4; i++ ) {
+		
+		for( var j = 0; j < 4; j++ ) { 	// Can stop earlier; 4th coord is ZERO !!
+		
+				result[i] += m[i][j] * p[j];
+		}
+	}
+	
+	return result;
+}
+/*
+function minor(matrixT, row, column) {
+    if(matrixT.length -1 == 3){
+        minorM = mat3()
+    } 
+    if(matrixT.length -1 == 2){
+        minorM = mat2()
+    } 
+    for (var i = 0; i < matrixT.length-1; i++){
+        for (var j = 0; j < matrixT.length-1; j++){
+            minorM[i][j] = 0;
+        }
+    } 
+    for (var i = 0; i < matrixT.length; i++){
+        for (var j = 0; i != row && j < matrixT[i].length; j++){
+            if (j != column){
+                minorM[i < row ? i : i - 1][j < column ? j : j - 1] = matrixT[i][j];}}}
+    return minorM;
+}
+
+function determinant(matrixT) {
+    if (matrixT.length != matrixT[0].length)
+        throw new IllegalStateException("invalid dimensions");
+
+    if (matrixT.length == 2)
+        return matrixT[0][0] * matrixT[1][1] - matrixT[0][1] * matrixT[1][0];
+
+    var det = 0;
+    for (var i = 0; i < matrixT[0].length; i++){
+        det += Math.pow(-1, i) * matrixT[0][i] * determinant(minor(matrixT, 0, i));
+   }
+    return det;
+}
+
+function inverse(matrixT) {
+    var inverseM; 
+
+    if(matrixT.length == 4){
+        inverseM= mat4()
+    } 
+    if(matrixT.length == 3){
+        inverseM= mat3()
+    } 
+    if(matrixT.length == 2){
+        inverseM= mat2()
+    } 
+    for (var i = 0; i < matrixT.length; i++){
+        for (var j = 0; j < matrixT.length; j++){
+            inverseM[i][j] = 0;
+        }
+    } 
+    // minors and cofactors
+    for (var i = 0; i < matrixT.length; i++){
+        for (var j = 0; j < matrixT[i].length; j++){
+            inverseM[i][j] = Math.pow(-1, i + j) * determinant(minor(matrixT, i, j));}}
+
+    // adjugate and determinant
+    var det = 1.0 / determinant(matrixT);
+    for (var i = 0; i < inverseM.length; i++) {
+        for (var j = 0; j <= i; j++) {
+            var temp = inverseM[i][j];
+            inverseM[i][j] = inverseM[j][i] * det;
+            inverseM[j][i] = temp * det;
+        }
+    }
+
+    return inverseM;
+}
+function inverse(m)
+{
+    inv = Array(16);
+    invOut = mat4();
+    var det;
+
+    var tmp = Array(16);
+
+    for(var i=0; i < 4; i++){
+        for(var j=0; j < 4; j++){
+            tmp[i*4+j] = m[i][j];
+        }
+    }
+
+    m = tmp;
+
+    inv[0] = m[5]  * m[10] * m[15] - 
+             m[5]  * m[11] * m[14] - 
+             m[9]  * m[6]  * m[15] + 
+             m[9]  * m[7]  * m[14] +
+             m[13] * m[6]  * m[11] - 
+             m[13] * m[7]  * m[10];
+
+    inv[4] = -m[4]  * m[10] * m[15] + 
+              m[4]  * m[11] * m[14] + 
+              m[8]  * m[6]  * m[15] - 
+              m[8]  * m[7]  * m[14] - 
+              m[12] * m[6]  * m[11] + 
+              m[12] * m[7]  * m[10];
+
+    inv[8] = m[4]  * m[9] * m[15] - 
+             m[4]  * m[11] * m[13] - 
+             m[8]  * m[5] * m[15] + 
+             m[8]  * m[7] * m[13] + 
+             m[12] * m[5] * m[11] - 
+             m[12] * m[7] * m[9];
+
+    inv[12] = -m[4]  * m[9] * m[14] + 
+               m[4]  * m[10] * m[13] +
+               m[8]  * m[5] * m[14] - 
+               m[8]  * m[6] * m[13] - 
+               m[12] * m[5] * m[10] + 
+               m[12] * m[6] * m[9];
+
+    inv[1] = -m[1]  * m[10] * m[15] + 
+              m[1]  * m[11] * m[14] + 
+              m[9]  * m[2] * m[15] - 
+              m[9]  * m[3] * m[14] - 
+              m[13] * m[2] * m[11] + 
+              m[13] * m[3] * m[10];
+
+    inv[5] = m[0]  * m[10] * m[15] - 
+             m[0]  * m[11] * m[14] - 
+             m[8]  * m[2] * m[15] + 
+             m[8]  * m[3] * m[14] + 
+             m[12] * m[2] * m[11] - 
+             m[12] * m[3] * m[10];
+
+    inv[9] = -m[0]  * m[9] * m[15] + 
+              m[0]  * m[11] * m[13] + 
+              m[8]  * m[1] * m[15] - 
+              m[8]  * m[3] * m[13] - 
+              m[12] * m[1] * m[11] + 
+              m[12] * m[3] * m[9];
+
+    inv[13] = m[0]  * m[9] * m[14] - 
+              m[0]  * m[10] * m[13] - 
+              m[8]  * m[1] * m[14] + 
+              m[8]  * m[2] * m[13] + 
+              m[12] * m[1] * m[10] - 
+              m[12] * m[2] * m[9];
+
+    inv[2] = m[1]  * m[6] * m[15] - 
+             m[1]  * m[7] * m[14] - 
+             m[5]  * m[2] * m[15] + 
+             m[5]  * m[3] * m[14] + 
+             m[13] * m[2] * m[7] - 
+             m[13] * m[3] * m[6];
+
+    inv[6] = -m[0]  * m[6] * m[15] + 
+              m[0]  * m[7] * m[14] + 
+              m[4]  * m[2] * m[15] - 
+              m[4]  * m[3] * m[14] - 
+              m[12] * m[2] * m[7] + 
+              m[12] * m[3] * m[6];
+
+    inv[10] = m[0]  * m[5] * m[15] - 
+              m[0]  * m[7] * m[13] - 
+              m[4]  * m[1] * m[15] + 
+              m[4]  * m[3] * m[13] + 
+              m[12] * m[1] * m[7] - 
+              m[12] * m[3] * m[5];
+
+    inv[14] = -m[0]  * m[5] * m[14] + 
+               m[0]  * m[6] * m[13] + 
+               m[4]  * m[1] * m[14] - 
+               m[4]  * m[2] * m[13] - 
+               m[12] * m[1] * m[6] + 
+               m[12] * m[2] * m[5];
+
+    inv[3] = -m[1] * m[6] * m[11] + 
+              m[1] * m[7] * m[10] + 
+              m[5] * m[2] * m[11] - 
+              m[5] * m[3] * m[10] - 
+              m[9] * m[2] * m[7] + 
+              m[9] * m[3] * m[6];
+
+    inv[7] = m[0] * m[6] * m[11] - 
+             m[0] * m[7] * m[10] - 
+             m[4] * m[2] * m[11] + 
+             m[4] * m[3] * m[10] + 
+             m[8] * m[2] * m[7] - 
+             m[8] * m[3] * m[6];
+
+    inv[11] = -m[0] * m[5] * m[11] + 
+               m[0] * m[7] * m[9] + 
+               m[4] * m[1] * m[11] - 
+               m[4] * m[3] * m[9] - 
+               m[8] * m[1] * m[7] + 
+               m[8] * m[3] * m[5];
+
+    inv[15] = m[0] * m[5] * m[10] - 
+              m[0] * m[6] * m[9] - 
+              m[4] * m[1] * m[10] + 
+              m[4] * m[2] * m[9] + 
+              m[8] * m[1] * m[6] - 
+              m[8] * m[2] * m[5];
+
+    det = m[0] * inv[0] + m[1] * inv[4] + m[2] * inv[8] + m[3] * inv[12];
+
+    if (det == 0)
+        return null;
+
+    det = 1.0 / det;
+
+    
+    for(var i=0; i < 4; i++){
+        for(var j=0; j < 4; j++){
+            invOut[i][j] = inv[i*4+j] * det; 
+        }
+    }
+
+    return invOut;
+}*/

@@ -1,14 +1,20 @@
 //////////////////////////////////////////////////////////////////////////////
 //
-//  TicTacToe.js 
+//  WebGL_example_27.js 
 //
-//  Adapted from WebGl_example28.js, by professor J.Madeira 
+//  Simple mesh data structure
 //
-//-------------------------------------------------------------------------
+//  Adapted from learningwebgl.com
+//
+//  J. Madeira - November 2015
+//
+//////////////////////////////////////////////////////////////////////////////
+
+
+//----------------------------------------------------------------------------
 //
 // Global Variables
 //
-
 var matrixGlobal; 
 
 var gl = null; // WebGL context
@@ -18,10 +24,10 @@ var shaderProgram = null;
 // NEW --- Buffers
 
 var cubeVertexPositionBuffer = null;
+	
+var cubeVertexColorBuffer = null;
 
 var cubeVertexIndexBuffer = null;
-
-var cubeVertexTextureCoordBuffer;
 
 // The global transformation parameters
 
@@ -59,19 +65,19 @@ var sz = 0.25;
 
 // NEW - Animation controls
 
-var rotationXX_ON = 0;
+var rotationXX_ON = 1;
 
 var rotationXX_DIR = 1;
 
 var rotationXX_SPEED = 1;
  
-var rotationYY_ON = 0;
+var rotationYY_ON = 1;
 
 var rotationYY_DIR = 1;
 
 var rotationYY_SPEED = 1;
  
-var rotationZZ_ON = 0;
+var rotationZZ_ON = 1;
 
 var rotationZZ_DIR = 1;
 
@@ -92,6 +98,7 @@ var globalRotationYY_SPEED = 1;
 // To allow choosing the way of drawing the model triangles
 
 var primitiveType = null;
+ 
  
 // From learningwebgl.com
 
@@ -135,49 +142,6 @@ vertices = [
             -0.35,  0.35, -0.35
 ];
 
-// Texture coordinates for the quadrangular faces
-
-// Notice how they are assigne to the corresponding vertices
-
-var textureCoords = [
-
-          // Front face
-          0.0, 0.0,
-          1.0, 0.0,
-          1.0, 1.0,
-          0.0, 1.0,
-
-          // Back face
-          1.0, 0.0,
-          1.0, 1.0,
-          0.0, 1.0,
-          0.0, 0.0,
-
-          // Top face
-          0.0, 1.0,
-          0.0, 0.0,
-          1.0, 0.0,
-          1.0, 1.0,
-
-          // Bottom face
-          1.0, 1.0,
-          0.0, 1.0,
-          0.0, 0.0,
-          1.0, 0.0,
-
-          // Right face
-          1.0, 0.0,
-          1.0, 1.0,
-          0.0, 1.0,
-          0.0, 0.0,
-
-          // Left face
-          0.0, 0.0,
-          1.0, 0.0,
-          1.0, 1.0,
-          0.0, 1.0,
-];
-
 // Vertex indices defining the triangles
         
 var cubeVertexIndices = [
@@ -194,7 +158,74 @@ var cubeVertexIndices = [
 
             20, 21, 22,   20, 22, 23  // Left face
 ];
+         
+// And their colour
 
+var colors = [
+
+		 // FRONT FACE - RED
+		 	
+		 1.00,  0.00,  0.00,
+		 
+		 1.00,  0.00,  0.00,
+		 
+		 1.00,  0.00,  0.00,
+
+		 1.00,  0.00,  0.00,
+		 			 
+		 // BACK FACE - BLACK
+		 	
+		 0.00,  0.00,  0.00,
+		 
+		 0.00,  0.00,  0.00,
+		 		 
+		 0.00,  0.00,  0.00,
+		 
+		 0.00,  0.00,  0.00,
+		 			 
+		 // TOP FACE - 
+		 	
+		 1.00,  1.00,  0.00,
+		 
+		 1.00,  1.00,  0.00,
+		 
+		 1.00,  1.00,  0.00,
+
+		 1.00,  1.00,  0.00,
+
+		 			 
+		 // BOTTOM FACE
+		 	
+		 0.00,  1.00,  1.00,
+		 
+		 0.00,  1.00,  1.00,
+		 
+		 0.00,  1.00,  1.00,
+
+		 0.00,  1.00,  1.00,
+
+		 			 
+		 // RIGHT FACE - BLUE
+		 	
+		 0.00,  0.00,  1.00,
+		 
+		 0.00,  0.00,  1.00,
+		 
+		 0.00,  0.00,  1.00,
+
+		 0.00,  0.00,  1.00,
+		 			 
+		 			 
+		 // LEFT FACE - GREEN
+		 	
+		 0.00,  1.00,  0.00,
+		 
+		 0.00,  1.00,  0.00,
+		 
+		 0.00,  1.00,  0.00,
+
+		 0.00,  1.00,  0.00,
+];
 var game_matrix = new Array();
 
 for (var i = 0; i < 3; i++) {
@@ -269,7 +300,6 @@ function evaluate_win(){
 
 }
 
-
 //----------------------------------------------------------------------------
 //
 // The WebGL code
@@ -280,58 +310,8 @@ function evaluate_win(){
 //  Rendering
 //
 
-// Handling the Textures
+// Handling the Vertex and the Color Buffers
 
-// From www.learningwebgl.com
-
-function handleLoadedTexture(texture) {
-	
-	gl.bindTexture(gl.TEXTURE_2D, texture);
-	gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, texture.image);
-	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-	gl.bindTexture(gl.TEXTURE_2D, null);
-}
-
-var ramalhoTexture;
-var brancoTexture;
-
-function initTexture() {
-	ramalhoTexture = gl.createTexture();
-	ramalhoTexture.image = new Image();
-	ramalhoTexture.image.onload = function () {
-		handleLoadedTexture(ramalhoTexture)
-	}
-
-	ramalhoTexture.image.src = "ramalho.jpg";
-
-
-	brancoTexture = gl.createTexture();
-	brancoTexture.image = new Image();
-	brancoTexture.image.onload = function () {
-		handleLoadedTexture(brancoTexture)
-	}
-
-	brancoTexture.image.src = "branco.jpg";
-
-
-	neutralTexture = gl.createTexture();
-	neutralTexture.image = new Image();
-	neutralTexture.image.onload = function () {
-		handleLoadedTexture(neutralTexture)
-	}
-
-	neutralTexture.image.src = "NeHe.gif";
-}
-
-
-
-
-//----------------------------------------------------------------------------
-
-// Handling the Buffers
-var bufferteste;
 function initBuffers() {	
 	
 	// Coordinates
@@ -342,13 +322,13 @@ function initBuffers() {
 	cubeVertexPositionBuffer.itemSize = 3;
 	cubeVertexPositionBuffer.numItems = vertices.length / 3;			
 
-	// Textures
+	// Colors
 		
-    cubeVertexTextureCoordBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexTextureCoordBuffer);
- 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoords), gl.STATIC_DRAW);
-    cubeVertexTextureCoordBuffer.itemSize = 2;
-    cubeVertexTextureCoordBuffer.numItems = 24;			
+	cubeVertexColorBuffer = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexColorBuffer);
+	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
+	cubeVertexColorBuffer.itemSize = 3;
+	cubeVertexColorBuffer.numItems = vertices.length / 3;			
 
 	// Vertex indices
 	
@@ -357,13 +337,6 @@ function initBuffers() {
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(cubeVertexIndices), gl.STATIC_DRAW);
     cubeVertexIndexBuffer.itemSize = 1;
     cubeVertexIndexBuffer.numItems = 36;
-
-    bufferteste = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, bufferteste);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([0.5, 0.5, 0.05, 1.5, 1.5, 10]), gl.STATIC_DRAW);
-    bufferteste.itemSize = 3;
-    bufferteste.numItems= 2;
-
 }
 
 //----------------------------------------------------------------------------
@@ -374,15 +347,14 @@ function drawModel( angleXX, angleYY, angleZZ,
 					sx, sy, sz,
 					tx, ty, tz,
 					mvMatrix,
-					primitiveType,
-					texture_id) {
+					primitiveType ) {
 
-    
-    	tmp = mult( rotationXXMatrix( globalAngleXX), rotationYYMatrix( globalAngleYY ));
+    // Pay attention to transformation order !!
+	tmp = mult( rotationXXMatrix( globalAngleXX), rotationYYMatrix( globalAngleYY ));
     	mvMatrix = mult( translationMatrix( 0, 0, globalTz), tmp); 
 
     	matrixGlobal = mvMatrix;
-
+    
 	mvMatrix = mult( mvMatrix, translationMatrix( tx, ty, tz ) );
 						 
 	mvMatrix = mult( mvMatrix, rotationZZMatrix( angleZZ ) );
@@ -405,32 +377,15 @@ function drawModel( angleXX, angleYY, angleZZ,
     
     gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, cubeVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
-	// NEW --- Textures
-	
-	gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexTextureCoordBuffer);
-    gl.vertexAttribPointer(shaderProgram.textureCoordAttribute, cubeVertexTextureCoordBuffer.itemSize, gl.FLOAT, false, 0, 0);
-
-    gl.activeTexture(gl.TEXTURE0);
-    if (texture_id == 1)
-   		gl.bindTexture(gl.TEXTURE_2D, ramalhoTexture);
+	gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexColorBuffer);
     
-    else if (texture_id == 0)
-   		gl.bindTexture(gl.TEXTURE_2D, brancoTexture);
+    gl.vertexAttribPointer(shaderProgram.vertexColorAttribute, cubeVertexColorBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
-   	else
-   		gl.bindTexture(gl.TEXTURE_2D, neutralTexture);
-
-        
-    gl.uniform1i(shaderProgram.samplerUniform, 0);
-    
-    // The vertex indices
-    
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeVertexIndexBuffer);
 
 	// Drawing the triangles --- NEW --- DRAWING ELEMENTS 
+	
 	gl.drawElements(gl.TRIANGLES, cubeVertexIndexBuffer.numItems, gl.UNSIGNED_SHORT, 0);	
-    gl.bindBuffer(gl.ARRAY_BUFFER, bufferteste);
-    gl.drawArrays(gl.GL_LINES, 0, 2);
 }
 
 //----------------------------------------------------------------------------
@@ -468,12 +423,14 @@ class Cube {
 
 cube_array = new Array();
 
+//  Drawing the 3D scene
+
 function drawScene() {
 	
 	var pMatrix;
 	
+	var mvMatrix = mat4();
 	
-    	var mvMatrix = mat4();
 	// Clearing with the background color
 	
 	gl.clear(gl.COLOR_BUFFER_BIT);
@@ -502,7 +459,6 @@ function drawScene() {
 	// And with diferent transformation parameters !!
 	
 	// Call the drawModel function !!
-
 	var possible_values = [-0.5, 0, 0.5]
 	cube_array = [];
 	for (var i = 0; i < possible_values.length; i++) {
@@ -516,41 +472,9 @@ function drawScene() {
 				);
 		}
 	}
+	
+	           
 }
-
-function detect_intersection(x, y){
-
-	var canvas = document.getElementById("my-canvas");
-	var rect = canvas.getBoundingClientRect();	
-
-    //aqui fico com as coordenadas do click
-    
-    	var x_clicked = (x - rect.left) / rect.width * 2 - 1;
-    	var y_clicked = (y - rect.top) / rect.height * -2 + 1;
-
-    console.log("CLicked: X " + x_clicked + " - Y " + y_clicked);
-
-    //esta e a minha matrix perspetiva
-    pMatrix = perspective( 45, 1, near, far);
-    console.log(matrixGlobal);
-    t = inverse(matrixGlobal);
-    
-    console.log(t);
-    console.log("identidade");
-    console.log(mult(matrixGlobal, t));
-    //temos de percorrer estes pontos a ver se intereseta em algum cubo
-    clipNear = [x_clicked , y_clicked, near];
-    clipFar  = [x_clicked, y_clicked,  far];
-    
-
-    vetor = [x_clicked, y_clicked,  far-near, 1];
-    console.log("aqui");
-
-
-
-}
-
-
 
 //----------------------------------------------------------------------------
 //
@@ -592,106 +516,6 @@ function animate() {
 	lastTime = timeNow;
 }
 
-//----------------------------------------------------------------------------
-
-// Handling keyboard events
-
-// Adapted from www.learningwebgl.com
-
-var currentlyPressedKeys = {};
-
-function handleKeys() {
-	
-	if (currentlyPressedKeys[33]) {
-		
-		// Page Up
-		
-		sx *= 0.9;
-		
-		sz = sy = sx;
-	}
-	if (currentlyPressedKeys[34]) {
-		
-		// Page Down
-		
-		sx *= 1.1;
-		
-		sz = sy = sx;
-	}
-	if (currentlyPressedKeys[37]) {
-		
-		// Left cursor key
-		
-		if( rotationYY_ON == 0 ) {
-			
-			rotationYY_ON = 1;
-		}  
-		
-		rotationYY_SPEED -= 0.25;
-	}
-	if (currentlyPressedKeys[39]) {
-		
-		// Right cursor key
-		
-		if( rotationYY_ON == 0 ) {
-			
-			rotationYY_ON = 1;
-		}  
-		
-		rotationYY_SPEED += 0.25;
-	}
-	if (currentlyPressedKeys[38]) {
-		
-		// Up cursor key
-		
-		if( rotationXX_ON == 0 ) {
-			
-			rotationXX_ON = 1;
-		}  
-		
-		rotationXX_SPEED -= 0.25;
-	}
-	if (currentlyPressedKeys[40]) {
-		
-		// Down cursor key
-		
-		if( rotationXX_ON == 0 ) {
-			
-			rotationXX_ON = 1;
-		}  
-		
-		rotationXX_SPEED += 0.25;
-	}
-}
-
-//----------------------------------------------------------------------------
-
-// Handling mouse events
-
-// Adapted from www.learningwebgl.com
-
-var moveImage = false;
-
-var mouseDown = false;
-
-var lastMouseX = null;
-
-var lastMouseY = null;
-
-function handleMouseDown(event) {
-	
-    mouseDown = true;
-    //verificar se depois do click o rato move ou nao
-    moveImage = false; 
-
-    lastMouseX = event.clientX;
-  
-    lastMouseY = event.clientY;
-
-
-
-
-}
 
 function change_player() {
 	if (player == "ramalho"){
@@ -704,57 +528,7 @@ function change_player() {
 		console.log("problemas");
 }
 
-function handleMouseUp(event) {
 
-    var newX = event.clientX;
-  
-    var newY = event.clientY;
-    // se entrar no if nao se moveu logo se clicou num cubo e a jogada
-    if(moveImage == false && newX == lastMouseX && newY == lastMouseY){
-        detect_intersection(newX, newY);
-	loop1:
-		for (var i = 0; i < game_matrix.length; i++) {
-			for (var j = 0; j < game_matrix[i].length; j++) {
-				for (var k = 0; k < game_matrix[i][j].length; k++) {
-					if (game_matrix[j][2][0] == 0){
-						game_matrix[j][2][0] = player;
-						//change_player();
-						break loop1;
-
-					}
-				}
-			}
-		}
-    }
-    console.log("Winner: "+evaluate_win());
-    mouseDown = false;
-}
-
-function handleMouseMove(event) {
-
-    if (!mouseDown) {
-        return;
-    } 
-    //caso o rato mova tem de passar a true
-    moveImage = true; 
-    // Rotation angles proportional to cursor displacement
-    
-    var newX = event.clientX;
-  
-    var newY = event.clientY;
-
-    var deltaX = newX - lastMouseX;
-    
-    globalAngleYY += radians( 10 * deltaX  )
-
-    var deltaY = newY - lastMouseY;
-    
-    globalAngleXX += radians( 10 * deltaY  )
-    
-    lastMouseX = newX
-    
-    lastMouseY = newY;
-  }
 
 // Timer
 
@@ -784,198 +558,6 @@ function outputInfos(){
 }
 
 //----------------------------------------------------------------------------
-
-function setEventListeners( canvas ){
-	
-	// NEW ---Handling the mouse
-	
-	// From learningwebgl.com
-
-    canvas.onmousedown = handleMouseDown;
-    
-    document.onmouseup = handleMouseUp;
-    
-    document.onmousemove = handleMouseMove;
-    
-    // NEW ---Handling the keyboard
-	
-	// From learningwebgl.com
-
-    function handleKeyDown(event) {
-		
-        currentlyPressedKeys[event.keyCode] = true;
-    }
-
-    function handleKeyUp(event) {
-		
-        currentlyPressedKeys[event.keyCode] = false;
-    }
-
-	document.onkeydown = handleKeyDown;
-    
-    document.onkeyup = handleKeyUp;
-	
-	// Dropdown list
-	
-
-
-	// Button events
-	
-	document.getElementById("XX-on-off-button").onclick = function(){
-		
-		// Switching on / off
-		
-		if( rotationXX_ON ) {
-			
-			rotationXX_ON = 0;
-		}
-		else {
-			
-			rotationXX_ON = 1;
-		}  
-	};
-
-	document.getElementById("XX-direction-button").onclick = function(){
-		
-		// Switching the direction
-		
-		if( rotationXX_DIR == 1 ) {
-			
-			rotationXX_DIR = -1;
-		}
-		else {
-			
-			rotationXX_DIR = 1;
-		}  
-	};      
-
-	document.getElementById("XX-slower-button").onclick = function(){
-		
-		rotationXX_SPEED *= 0.75;  
-	};      
-
-	document.getElementById("XX-faster-button").onclick = function(){
-		
-		rotationXX_SPEED *= 1.25;  
-	};      
-
-	document.getElementById("YY-on-off-button").onclick = function(){
-		
-		// Switching on / off
-		
-		if( rotationYY_ON ) {
-			
-			rotationYY_ON = 0;
-		}
-		else {
-			
-			rotationYY_ON = 1;
-		}  
-	};
-
-	document.getElementById("YY-direction-button").onclick = function(){
-		
-		// Switching the direction
-		
-		if( rotationYY_DIR == 1 ) {
-			
-			rotationYY_DIR = -1;
-		}
-		else {
-			
-			rotationYY_DIR = 1;
-		}  
-	};      
-
-	document.getElementById("YY-slower-button").onclick = function(){
-		
-		rotationYY_SPEED *= 0.75;  
-	};      
-
-	document.getElementById("YY-faster-button").onclick = function(){
-		
-		rotationYY_SPEED *= 1.25;  
-	};      
-
-	document.getElementById("ZZ-on-off-button").onclick = function(){
-		
-		// Switching on / off
-		
-		if( rotationZZ_ON ) {
-			
-			rotationZZ_ON = 0;
-		}
-		else {
-			
-			rotationZZ_ON = 1;
-		}  
-	};
-
-	document.getElementById("ZZ-direction-button").onclick = function(){
-		
-		// Switching the direction
-		
-		if( rotationZZ_DIR == 1 ) {
-			
-			rotationZZ_DIR = -1;
-		}
-		else {
-			
-			rotationZZ_DIR = 1;
-		}  
-	};      
-
-	document.getElementById("ZZ-slower-button").onclick = function(){
-		
-		rotationZZ_SPEED *= 0.75;  
-	};      
-
-	document.getElementById("ZZ-faster-button").onclick = function(){
-		
-		rotationZZ_SPEED *= 1.25;  
-	};      
-
-	document.getElementById("reset-button").onclick = function(){
-		
-		// The initial values
-
-		tx = 0.0;
-
-		ty = 0.0;
-
-		tz = 0.0;
-
-		angleXX = 0.0;
-
-		angleYY = 0.0;
-
-		angleZZ = 0.0;
-
-		sx = 0.25;
-
-		sy = 0.25;
-
-		sz = 0.25;
-		
-		rotationXX_ON = 0;
-		
-		rotationXX_DIR = 1;
-		
-		rotationXX_SPEED = 1;
-
-		rotationYY_ON = 0;
-		
-		rotationYY_DIR = 1;
-		
-		rotationYY_SPEED = 1;
-
-		rotationZZ_ON = 0;
-		
-		rotationZZ_DIR = 1;
-		
-		rotationZZ_SPEED = 1;
-	};      
-}
 
 //----------------------------------------------------------------------------
 //
@@ -1016,8 +598,9 @@ function initWebGL( canvas ) {
 
 function runWebGL() {
 	
-	var canvas = document.getElementById("my-canvas");
-	initWebGL( canvas );
+	var canvas = document.getElementById("my-canvas2");
+	
+	initWebGL( canvas2 );
 
 	shaderProgram = initShaders( gl );
 	
@@ -1025,9 +608,9 @@ function runWebGL() {
 	
 	initBuffers();
 	
-	initTexture();
-	
 	tick();		// A timer controls the rendering / animation    
 
 	outputInfos();
 }
+
+

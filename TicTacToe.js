@@ -378,10 +378,10 @@ function drawModel( angleXX, angleYY, angleZZ,
 					texture_id) {
 
     
-    	tmp = mult( rotationXXMatrix( globalAngleXX), rotationYYMatrix( globalAngleYY ));
-    	mvMatrix = mult( translationMatrix( 0, 0, globalTz), tmp); 
+   	tmp = mult( rotationXXMatrix( globalAngleXX), rotationYYMatrix( globalAngleYY ));
+   	mvMatrix = mult( translationMatrix( 0, 0, globalTz), tmp); 
 
-    	matrixGlobal = mvMatrix;
+  	matrixGlobal = mvMatrix;
 
 	mvMatrix = mult( mvMatrix, translationMatrix( tx, ty, tz ) );
 						 
@@ -525,26 +525,12 @@ function detect_intersection(x, y){
 
     //aqui fico com as coordenadas do click
     
-    	var x_clicked = (x - rect.left) / rect.width * 2 - 1;
-    	var y_clicked = (y - rect.top) / rect.height * -2 + 1;
+   	var x_clicked = (x - rect.left) / rect.width * 2 - 1;
+   	var y_clicked = (y - rect.top) / rect.height * -2 + 1;
 
     console.log("CLicked: X " + x_clicked + " - Y " + y_clicked);
-
-    //esta e a minha matrix perspetiva
-    pMatrix = perspective( 45, 1, near, far);
-    console.log(matrixGlobal);
-    t = inverse(matrixGlobal);
-    
-    console.log(t);
-    console.log("identidade");
-    console.log(mult(matrixGlobal, t));
-    //temos de percorrer estes pontos a ver se intereseta em algum cubo
-    clipNear = [x_clicked , y_clicked, near];
-    clipFar  = [x_clicked, y_clicked,  far];
-    
-
-    vetor = [x_clicked, y_clicked,  far-near, 1];
-    console.log("aqui");
+    var idCubo = intersectCube(x_clicked, y_clicked);
+    console.log(idCubo);
 
 
 

@@ -600,7 +600,7 @@ function runWebGL() {
 	
 	var canvas = document.getElementById("my-canvas2");
 	
-	initWebGL( canvas2 );
+	initWebGL( canvas );
 
 	shaderProgram = initShadersColor( gl );
 	
@@ -614,3 +614,7 @@ function runWebGL() {
 }
 
 
+function intersectCube(x, y){
+
+    return x+y;
+}

@@ -1019,7 +1019,7 @@ function runWebGL() {
 	var canvas = document.getElementById("my-canvas");
 	initWebGL( canvas );
 
-	shaderProgram = initShaders( gl );
+	shaderProgram = initShadersTexture( gl );
 	
 	setEventListeners( canvas );
 	

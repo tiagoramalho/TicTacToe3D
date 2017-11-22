@@ -541,7 +541,7 @@ function runWebGL() {
 	
 	initWebGL( canvas2 );
 
-	shaderProgram = initShaders( gl );
+	shaderProgram = initShadersColor( gl );
 	
 	setEventListeners( canvas );
 	

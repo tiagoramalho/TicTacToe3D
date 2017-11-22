@@ -238,68 +238,6 @@ for (var i = 0; i < 3; i++) {
 	}
 }
 
-
-function evaluate_win(){
-
-	// TEsta LINHAS
-
-	var winner = false;
-
-	for (var i = 0; i < game_matrix.length; i++) {
-		for (var j = 0; j < game_matrix[i].length; j++) {
-			for (var k = 0; k < game_matrix[i][j].length; k++) {
-				if (game_matrix[i][j][0] != 0 && game_matrix[i][j][k] == game_matrix[i][j][0]){
-					console.log(game_matrix[i][j][k]);
-					if(k == game_matrix[i][j].length-1)
-						winner = game_matrix[i][j][k];
-				}
-
-				else
-					break
-			}
-		}
-	}
-	if (winner != false)
-		return winner
-
-
-
-	for (var i = 0; i < game_matrix.length; i++) {
-		for (var j = 0; j < game_matrix[i].length; j++) {
-			for (var k = 0; k < game_matrix[i][j].length; k++) {
-				if (game_matrix[i][0][k] != 0 && game_matrix[i][j][k] == game_matrix[i][0][k])
-					if(j == game_matrix[i][j].length-1)
-						winner = game_matrix[i][j][k];
-				else
-					break
-			}
-		}
-	}
-	if (winner != false)
-		return winner
-
-
-
-
-	for (var i = 0; i < game_matrix.length; i++) {
-		for (var j = 0; j < game_matrix[i].length; j++) {
-			for (var k = 0; k < game_matrix[i][j].length; k++) {
-				if (game_matrix[0][j][k] != 0 && game_matrix[i][j][k] == game_matrix[0][j][k])
-					if(i == game_matrix[i][j].length-1)
-						winner = game_matrix[i][j][k];
-				else
-					break
-			}
-		}
-	}
-	if (winner != false)
-		return winner
-
-
-	return winner
-
-}
-
 //----------------------------------------------------------------------------
 //
 // The WebGL code
@@ -398,10 +336,11 @@ var near = 0.05;
 var far = 10;
 
 class Cube {
-  constructor(tx, ty, tz,mvMatrix, owner) {
+  constructor(tx, ty, tz,mvMatrix, color) {
     this.tx = tx;
     this.ty = ty;
     this.tz = tz;
+    this.color = color;
 
     var id = 3;
     if (owner == "ramalho")

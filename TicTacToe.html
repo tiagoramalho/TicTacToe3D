@@ -31,7 +31,39 @@
 
                 vTextureCoord = aTextureCoord;
             }
-        </script>
+    </script>
+
+    <script id="shader-vs2" type="x-shader/x-vertex">
+        
+        attribute vec3 aVertexPosition;
+
+        attribute vec3 aVertexColor;
+        
+        uniform mat4 uMVMatrix;
+
+        uniform mat4 uPMatrix;
+
+        varying vec4 vertexColor;
+        
+        void main(void) {
+            
+            // To allow seeing the points drawn
+            
+            gl_PointSize = 5.0;
+            
+            // Just converting the (x,y,z) vertices to Homogeneous Coord.
+            
+            // And multiplying by the Projection and the Model-View matrix
+            
+            gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+            
+            // Converting the RGB color value to RGBA
+            
+            vertexColor = vec4(aVertexColor, 1.0);
+        }
+    </script>
+
+
 
     <script id="shader-fs" type="x-shader/x-fragment">
 
@@ -45,6 +77,22 @@
 
                 gl_FragColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));
             }
+
+    </script>
+
+
+    <script id="shader-fs2" type="x-shader/x-fragment">
+
+        precision mediump float;
+        
+        varying vec4 vertexColor;
+        
+        void main(void) {
+            
+            // Using the passed vertex color
+            
+            gl_FragColor = vertexColor;
+        }
 
     </script>
 
@@ -62,11 +110,15 @@
 
     <script type="text/javascript" src="initShaders.js"></script>
 
+    <script type="text/javascript" src="WebGL_example_27.js"></script>
+
     <script type="text/javascript" src="TicTacToe.js"></script>
+    
+
 
 </head>
 
-<body onload="runWebGL();">
+<body onload="runWebGL();runWebGL2();">
 <div class="container" style="width: 100%">
     <div class="row">
         <div class="col-md-3">

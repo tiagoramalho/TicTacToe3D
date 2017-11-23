@@ -524,9 +524,13 @@ function detect_intersection(x, y){
    	var y_clicked = (y - rect.top) / rect.height * -2 + 1;
 
     console.log("CLicked: X " + x_clicked + " - Y " + y_clicked);
-    var idCubo = intersectCube(x_clicked, y_clicked);
+    var idCubo = intersectCube( x , y, rect.width, rect.height);
     console.log(idCubo);
 
+    var pixels = new Uint8Array(rect.width * rect.height *4);
+
+    gl2.readPixels( (x - rect.left), (y - rect.top),rect.width ,rect.height , gl2.RGBA, gl2.UNSIGNED_BYTE, pixels);
+    console.log(pixels); // Uint8Array
 
 
 }

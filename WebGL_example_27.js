@@ -578,7 +578,7 @@ function drawScene2() {
 
 	var canvas = document.getElementById("my-canvas2");
 
-    pixels = new Uint8Array(16);
+    pixels = new Uint8Array(4);
 
 
    	gl2.readPixels( x_clicked, y_clicked, 1,1 , gl2.RGBA, gl2.UNSIGNED_BYTE, pixels);
@@ -713,12 +713,3 @@ function runWebGL2() {
 
 }
 
-
-function intersectCube(x, y, width, height){
-
-    var pixels = new Uint8Array(width * height *4);
-
-    gl2.readPixels(x, y, width, height, gl2.RGBA, gl2.UNSIGNED_BYTE, pixels);
-    console.log(pixels); // Uint8Array
-    return pixels;
-}

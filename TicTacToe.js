@@ -306,7 +306,7 @@ function initTexture() {
 		handleLoadedTexture(ramalhoTexture)
 	}
 
-	ramalhoTexture.image.src = "ramalho.jpg";
+	ramalhoTexture.image.src = "x.gif";
 
 
 	brancoTexture = gl.createTexture();
@@ -315,7 +315,7 @@ function initTexture() {
 		handleLoadedTexture(brancoTexture)
 	}
 
-	brancoTexture.image.src = "branco.jpg";
+	brancoTexture.image.src = "bola.png";
 
 
 	neutralTexture = gl.createTexture();
@@ -324,7 +324,7 @@ function initTexture() {
 		handleLoadedTexture(neutralTexture)
 	}
 
-	neutralTexture.image.src = "NeHe.gif";
+	neutralTexture.image.src = "cinza.jpg";
 }
 
 
@@ -711,26 +711,15 @@ function set_variables(x, y){
 function user_play(){
 	console.log(pixels);
     
-    console.log(random_colors[0]);
-    for(var i = 0; i < random_colors.length; i++){
-        if(pixels[0]/255 == random_colors[i][0] && pixels[1]/255 == random_colors[i][1] && pixels[2]/255 == random_colors[i][2]){
-            console.log("JOAO BRANQUINHO E UMA PUTA");
+    for(var i = 0; i < cube_array2.length; i++){
+        if(pixels[0]/255 == cube_array2[i].tupleColor[0] && pixels[1]/255 == cube_array2[i].tupleColor[1]  && pixels[2]/255 == cube_array2[i].tupleColor[2] ){
+            console.log(player);
+		    game_matrix[cube_array2[i].position[0]][ cube_array2[i].position[1]][ cube_array2[i].position[2]] = player;
+		    change_player();
+            break;
         }
      
     }
-	loop1:
-	for (var i = 0; i < game_matrix.length; i++) {
-		for (var j = 0; j < game_matrix[i].length; j++) {
-			for (var k = 0; k < game_matrix[i][j].length; k++) {
-				if (game_matrix[j][2][0] == 0){
-					game_matrix[j][2][0] = player;
-					//change_player();
-						break loop1;
-
-				}
-			}
-		}
-	}
 }
 
 function handleMouseUp(event) {
@@ -747,7 +736,7 @@ function handleMouseUp(event) {
        	user_play()
 
     }
-    //console.log("Winner: "+evaluate_win());
+    console.log("Winner: "+evaluate_win());
     mouseDown = false;
 }
 

@@ -493,11 +493,12 @@ function drawModel2( angleXX, angleYY, angleZZ,
 //----------------------------------------------------------------------------
 
 class Cube2 {
-  constructor(tx, ty, tz,mvMatrix, tuple) {
+  constructor(tx, ty, tz,mvMatrix, tuple, position) {
     this.tx = tx;
     this.ty = ty;
     this.tz = tz;
     this.tupleColor = tuple;
+    this.position = position;
 
     drawModel2( -angleXX, angleYY, angleZZ, 
 	           sx, sy, sz,
@@ -554,23 +555,20 @@ function drawScene2() {
 	var number = 0;
 	for (var i = 0; i < possible_values.length; i++) {
 		for (var j = 0; j < possible_values.length; j++) {
-			for (var k = 0; k < possible_values.length; k++)
-
+			for (var k = 0; k < possible_values.length; k++){
 				cube_array2.push(new Cube2( tx + possible_values[i],
 										 	ty + possible_values[j],
 										 	tz + possible_values[k],
 										 	mvMatrix,
-										 	random_colors[countRandom],
-                                            countRandom)
+										 	random_colors[ number],
+                                            [i,j,k])
 				);
 				number++;
+            }
+                
 
 		}
 	}
-    if(countRandom == 28)
-        countRandom = 1;
-    else
-        countRandom++;
 
 
 

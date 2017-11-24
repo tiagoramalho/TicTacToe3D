@@ -220,7 +220,7 @@ function evaluate_win(){
 		for (var j = 0; j < game_matrix[i].length; j++) {
 			for (var k = 0; k < game_matrix[i][j].length; k++) {
 				if (game_matrix[i][j][0] != 0 && game_matrix[i][j][k] == game_matrix[i][j][0]){
-					console.log(game_matrix[i][j][k]);
+					//console.log(game_matrix[i][j][k]);
 					if(k == game_matrix[i][j].length-1)
 						winner = game_matrix[i][j][k];
 				}
@@ -672,7 +672,9 @@ function handleMouseDown(event) {
 	
     mouseDown = true;
     //verificar se depois do click o rato move ou nao
-    moveImage = false; 
+    moveImage = false;
+
+
 
     lastMouseX = event.clientX;
   
@@ -702,7 +704,7 @@ function set_variables(x, y){
     //aqui fico com as coordenadas do click
     
    	x_clicked = (x - rect.left);
-   	y_clicked = (y - rect.top);
+   	y_clicked = (rect.bottom - y);
 }
 
 
@@ -733,10 +735,12 @@ function handleMouseUp(event) {
     // se entrar no if nao se moveu logo se clicou num cubo e a jogada
     if(moveImage == false && newX == lastMouseX && newY == lastMouseY){
 		set_variables(newX, newY);
-       	setTimeout(user_play(),1000);
+		drawScene2();
+
+       	user_play()
 
     }
-    console.log("Winner: "+evaluate_win());
+    //console.log("Winner: "+evaluate_win());
     mouseDown = false;
 }
 
@@ -773,10 +777,10 @@ function tick() {
 	
 	// NEW --- Processing keyboard events 
 	
-	handleKeys();
-	
 	drawScene();
-	drawScene2();
+	//drawScene2();
+
+	handleKeys();
 	
 	animate();
 }

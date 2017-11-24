@@ -520,7 +520,7 @@ function drawScene2() {
 	var mvMatrix = mat4();
 	
 	// Clearing with the background color
-	gl2.clearColor(255, 0, 0.2, 255);
+	//gl2.clearColor(255, 0, 0.2, 255);
 	
 	gl2.clear(gl2.COLOR_BUFFER_BIT);
 
@@ -580,10 +580,11 @@ function drawScene2() {
 
     pixels = new Uint8Array(4);
 
+   	console.log(x_clicked + "  " + y_clicked)
+
 
    	gl2.readPixels( x_clicked, y_clicked, 1,1 , gl2.RGBA, gl2.UNSIGNED_BYTE, pixels);
 
-   	console.log(x_clicked + "  " + y_clicked)
 
 	           
 }

@@ -216,6 +216,8 @@ function evaluate_win(){
 
 	var winner = false;
 
+
+
 	for (var i = 0; i < game_matrix.length; i++) {
 		for (var j = 0; j < game_matrix[i].length; j++) {
 			for (var k = 0; k < game_matrix[i][j].length; k++) {
@@ -230,10 +232,14 @@ function evaluate_win(){
 			}
 		}
 	}
-	if (winner != false)
-		return winner
+
+	if (winner != false){
+		console.log("1");
+		return winner;
+	}
 
 
+	
 
 	for (var i = 0; i < game_matrix.length; i++) {
 		for (var j = 0; j < game_matrix[i].length; j++) {
@@ -246,8 +252,10 @@ function evaluate_win(){
 			}
 		}
 	}
-	if (winner != false)
-		return winner
+	if (winner != false){
+		console.log("2");
+		return winner;
+	}
 
 
 
@@ -263,11 +271,40 @@ function evaluate_win(){
 			}
 		}
 	}
-	if (winner != false)
-		return winner
+	if (winner != false){
+		console.log("3");
+		return winner;
+	}
+	
+	for (var i = 0; i < game_matrix.length; i++) {
+		if (game_matrix[0][0][i] != 0 && game_matrix[0][0][i] ==  game_matrix[1][1][i] && game_matrix[1][1][i] == game_matrix[2][2][i]){
+			winner = game_matrix[0][0][i];
+			break;
+		}
 
+		if (game_matrix[2][0][i] != 0 && game_matrix[2][0][i] ==  game_matrix[1][1][i] && game_matrix[1][1][i] == game_matrix[0][2][i]){
+			winner = game_matrix[2][0][i];
+			break;
+		}
+		
+	}
+	if (winner != false){
+		console.log("4");
+		return winner;
+	}
+	
+	/*
+	for (var i = 0; i < game_matrix.length; i++) {
+		if (game_matrix[2][0][i] != 0 && game_matrix[2][0][i] ==  game_matrix[1][1][i] && game_matrix[1][1][i] == game_matrix[0][2][i]){
+			winner = game_matrix[0][0][i];
+			break;
+		}
+		
+	}
+	*/
 
 	return winner
+	
 
 }
 
@@ -713,10 +750,11 @@ function user_play(){
     
     for(var i = 0; i < cube_array2.length; i++){
         if(pixels[0]/255 == cube_array2[i].tupleColor[0] && pixels[1]/255 == cube_array2[i].tupleColor[1]  && pixels[2]/255 == cube_array2[i].tupleColor[2] ){
-            console.log(player);
+            console.log(cube_array2[i].position);
 		    game_matrix[cube_array2[i].position[0]][ cube_array2[i].position[1]][ cube_array2[i].position[2]] = player;
 		    change_player();
             break;
+
         }
      
     }

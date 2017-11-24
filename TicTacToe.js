@@ -83,6 +83,10 @@ var cube_array;
 
 var player = "ramalho";
 
+var ramalho_wins = 0;
+
+var branco_wins = 0;
+
 
  // NEW - GLOBAL Animation controls
 
@@ -95,6 +99,10 @@ var globalRotationYY_SPEED = 1;
 
 var primitiveType = null;
  
+var game_blocked = false;
+
+var game_matrix;
+
 // From learningwebgl.com
 
 // NEW --- Storing the vertices defining the cube faces
@@ -197,113 +205,113 @@ var cubeVertexIndices = [
             20, 21, 22,   20, 22, 23  // Left face
 ];
 
-var game_matrix = new Array();
-
-for (var i = 0; i < 3; i++) {
-	game_matrix[i]=new Array();
-	for (var j = 0; j < 3; j++) {
-		game_matrix[i][j]=new Array();
-		for (var k = 0; k < 3; k++) {
-			game_matrix[i][j][k] = 0;
-		}
-	}
-}
-
+var game_matrix;
 
 function evaluate_win(){
-
-	// TEsta LINHAS
-
-	var winner = false;
-
-
 
 	for (var i = 0; i < game_matrix.length; i++) {
 		for (var j = 0; j < game_matrix[i].length; j++) {
 			for (var k = 0; k < game_matrix[i][j].length; k++) {
 				if (game_matrix[i][j][0] != 0 && game_matrix[i][j][k] == game_matrix[i][j][0]){
-					//console.log(game_matrix[i][j][k]);
-					if(k == game_matrix[i][j].length-1)
-						winner = game_matrix[i][j][k];
+					if(k == game_matrix[i][j].length-1){
+						console.log("2")
+						return game_matrix[i][j][k];
+					}
 				}
-
 				else
 					break
 			}
 		}
 	}
 
-	if (winner != false){
-		console.log("1");
-		return winner;
+	for (var i = 0; i < game_matrix.length; i++) {
+		for (var j = 0; j < game_matrix[i].length; j++) {
+			for (var k = 0; k < game_matrix[i][j].length; k++) {
+				if (game_matrix[i][0][j] != 0 && game_matrix[i][k][j] == game_matrix[i][0][j]){
+					if(k == game_matrix[i][j].length-1){
+						console.log("2");
+						return game_matrix[i][k][j];
+					}	
+				}
+				else
+					break
+			}
+		}
 	}
-
-
 	
-
 	for (var i = 0; i < game_matrix.length; i++) {
 		for (var j = 0; j < game_matrix[i].length; j++) {
 			for (var k = 0; k < game_matrix[i][j].length; k++) {
-				if (game_matrix[i][0][k] != 0 && game_matrix[i][j][k] == game_matrix[i][0][k])
-					if(j == game_matrix[i][j].length-1)
-						winner = game_matrix[i][j][k];
+				if (game_matrix[0][i][j] != 0 && game_matrix[k][i][j] == game_matrix[0][i][j]){
+					if(k == game_matrix[i][j].length-1){
+						console.log("3");
+						return game_matrix[k][i][j];
+					}
+				}
 				else
 					break
 			}
 		}
-	}
-	if (winner != false){
-		console.log("2");
-		return winner;
-	}
-
-
-
-
-	for (var i = 0; i < game_matrix.length; i++) {
-		for (var j = 0; j < game_matrix[i].length; j++) {
-			for (var k = 0; k < game_matrix[i][j].length; k++) {
-				if (game_matrix[0][j][k] != 0 && game_matrix[i][j][k] == game_matrix[0][j][k])
-					if(i == game_matrix[i][j].length-1)
-						winner = game_matrix[i][j][k];
-				else
-					break
-			}
-		}
-	}
-	if (winner != false){
-		console.log("3");
-		return winner;
 	}
 	
 	for (var i = 0; i < game_matrix.length; i++) {
 		if (game_matrix[0][0][i] != 0 && game_matrix[0][0][i] ==  game_matrix[1][1][i] && game_matrix[1][1][i] == game_matrix[2][2][i]){
-			winner = game_matrix[0][0][i];
-			break;
+			console.log("4");
+			return game_matrix[0][0][i];
 		}
 
 		if (game_matrix[2][0][i] != 0 && game_matrix[2][0][i] ==  game_matrix[1][1][i] && game_matrix[1][1][i] == game_matrix[0][2][i]){
-			winner = game_matrix[2][0][i];
-			break;
+			console.log("4");
+			return game_matrix[2][0][i];
 		}
 		
 	}
-	if (winner != false){
-		console.log("4");
-		return winner;
-	}
-	
-	/*
+
 	for (var i = 0; i < game_matrix.length; i++) {
-		if (game_matrix[2][0][i] != 0 && game_matrix[2][0][i] ==  game_matrix[1][1][i] && game_matrix[1][1][i] == game_matrix[0][2][i]){
-			winner = game_matrix[0][0][i];
-			break;
+		if (game_matrix[i][0][2] != 0 && game_matrix[i][0][2] ==  game_matrix[i][1][1] && game_matrix[i][1][1] == game_matrix[i][2][0]){
+			console.log("5");
+			return game_matrix[i][0][2];
 		}
-		
-	}
-	*/
 
-	return winner
+		if (game_matrix[i][2][2] != 0 && game_matrix[i][2][2] ==  game_matrix[i][1][1] && game_matrix[i][1][1] == game_matrix[i][0][0]){
+			console.log("5");
+			return game_matrix[i][2][2];
+		}
+	}
+
+	for (var i = 0; i < game_matrix.length; i++) {
+		if (game_matrix[0][i][0] != 0 && game_matrix[0][i][0] ==  game_matrix[1][i][1] && game_matrix[1][i][1] == game_matrix[2][i][2]){
+			console.log("6");
+			return game_matrix[0][i][0];
+		}
+
+		if (game_matrix[0][i][2] != 0 && game_matrix[0][i][2] ==  game_matrix[1][i][1] && game_matrix[1][i][1] == game_matrix[2][i][0]){
+			console.log("6");
+			return game_matrix[0][i][2];
+		}
+	}
+
+	if (game_matrix[0][0][0] != 0 && game_matrix[0][0][0] == game_matrix[1][1][1] && game_matrix[1][1][1] == game_matrix[2][2][2]){
+		console.log("7");
+		return game_matrix[0][0][0];
+	}
+
+	if (game_matrix[0][0][2] != 0 && game_matrix[0][0][2] == game_matrix[1][1][1] && game_matrix[1][1][1] == game_matrix[2][2][0]){
+		console.log("7");
+		return game_matrix[0][0][2];
+	}
+
+	if (game_matrix[0][2][2] != 0 && game_matrix[0][2][2] == game_matrix[1][1][1] && game_matrix[1][1][1] == game_matrix[2][0][0]){
+		console.log("7");
+		game_matrix[0][2][2]
+	}
+
+	if (game_matrix[2][0][2] != 0 && game_matrix[2][0][2] == game_matrix[1][1][1] && game_matrix[1][1][1] == game_matrix[0][2][0]){
+		console.log("7");
+		game_matrix[2][0][2]
+	}
+
+	return false
 	
 
 }
@@ -717,9 +725,6 @@ function handleMouseDown(event) {
   
     lastMouseY = event.clientY;
 
-
-
-
 }
 
 function change_player() {
@@ -751,8 +756,10 @@ function user_play(){
     for(var i = 0; i < cube_array2.length; i++){
         if(pixels[0]/255 == cube_array2[i].tupleColor[0] && pixels[1]/255 == cube_array2[i].tupleColor[1]  && pixels[2]/255 == cube_array2[i].tupleColor[2] ){
             console.log(cube_array2[i].position);
-		    game_matrix[cube_array2[i].position[0]][ cube_array2[i].position[1]][ cube_array2[i].position[2]] = player;
-		    change_player();
+            if(game_matrix[cube_array2[i].position[0]][ cube_array2[i].position[1]][ cube_array2[i].position[2]] == 0){
+			    game_matrix[cube_array2[i].position[0]][ cube_array2[i].position[1]][ cube_array2[i].position[2]] = player;
+			    change_player();
+            }
             break;
 
         }
@@ -767,14 +774,36 @@ function handleMouseUp(event) {
     var newY = event.clientY;
 
     // se entrar no if nao se moveu logo se clicou num cubo e a jogada
-    if(moveImage == false && newX == lastMouseX && newY == lastMouseY){
+    if(moveImage == false && newX == lastMouseX && newY == lastMouseY && !game_blocked){
 		set_variables(newX, newY);
 		drawScene2();
-
        	user_play()
-
     }
-    console.log("Winner: "+evaluate_win());
+
+
+    var winner = evaluate_win();
+
+	if (winner && !game_blocked){
+
+		if(winner == "ramalho"){
+			document.getElementById("info").innerHTML = "Player 1 WOOON! :)";
+			ramalho_wins++;
+
+		}
+
+		else{
+			document.getElementById("info").innerHTML = "Player 2 WOOON! :)";
+			branco_wins++;
+
+		}
+		document.getElementById("vit1").innerHTML = "Vitórias: " + ramalho_wins;
+		document.getElementById("vit2").innerHTML = "Vitórias: " + branco_wins;
+
+		document.getElementById("new_game").style.visibility = "";
+
+		game_blocked = true;
+	}
+    console.log("Winner: "+ winner);
     mouseDown = false;
 }
 
@@ -865,164 +894,28 @@ function setEventListeners( canvas ){
 	
 	// Dropdown list
 	
-
-
 	// Button events
-	
-	document.getElementById("XX-on-off-button").onclick = function(){
-		
-		// Switching on / off
-		
-		if( rotationXX_ON ) {
-			
-			rotationXX_ON = 0;
-		}
-		else {
-			
-			rotationXX_ON = 1;
-		}  
+
+	document.getElementById("reset").onclick = function(){
+
+		ramalho_wins = 0;
+		branco_wins = 0;
+		player = "ramalho";
+		document.getElementById("new_game").style.visibility = "hidden";
+
+
 	};
 
-	document.getElementById("XX-direction-button").onclick = function(){
-		
-		// Switching the direction
-		
-		if( rotationXX_DIR == 1 ) {
-			
-			rotationXX_DIR = -1;
-		}
-		else {
-			
-			rotationXX_DIR = 1;
-		}  
-	};      
+	document.getElementById("new_game").onclick = function(){
+		new_game();
+		game_blocked = false;
 
-	document.getElementById("XX-slower-button").onclick = function(){
-		
-		rotationXX_SPEED *= 0.75;  
-	};      
+		document.getElementById("new_game").style.visibility = "hidden";
 
-	document.getElementById("XX-faster-button").onclick = function(){
-		
-		rotationXX_SPEED *= 1.25;  
-	};      
 
-	document.getElementById("YY-on-off-button").onclick = function(){
-		
-		// Switching on / off
-		
-		if( rotationYY_ON ) {
-			
-			rotationYY_ON = 0;
-		}
-		else {
-			
-			rotationYY_ON = 1;
-		}  
-	};
+	}
 
-	document.getElementById("YY-direction-button").onclick = function(){
-		
-		// Switching the direction
-		
-		if( rotationYY_DIR == 1 ) {
-			
-			rotationYY_DIR = -1;
-		}
-		else {
-			
-			rotationYY_DIR = 1;
-		}  
-	};      
 
-	document.getElementById("YY-slower-button").onclick = function(){
-		
-		rotationYY_SPEED *= 0.75;  
-	};      
-
-	document.getElementById("YY-faster-button").onclick = function(){
-		
-		rotationYY_SPEED *= 1.25;  
-	};      
-
-	document.getElementById("ZZ-on-off-button").onclick = function(){
-		
-		// Switching on / off
-		
-		if( rotationZZ_ON ) {
-			
-			rotationZZ_ON = 0;
-		}
-		else {
-			
-			rotationZZ_ON = 1;
-		}  
-	};
-
-	document.getElementById("ZZ-direction-button").onclick = function(){
-		
-		// Switching the direction
-		
-		if( rotationZZ_DIR == 1 ) {
-			
-			rotationZZ_DIR = -1;
-		}
-		else {
-			
-			rotationZZ_DIR = 1;
-		}  
-	};      
-
-	document.getElementById("ZZ-slower-button").onclick = function(){
-		
-		rotationZZ_SPEED *= 0.75;  
-	};      
-
-	document.getElementById("ZZ-faster-button").onclick = function(){
-		
-		rotationZZ_SPEED *= 1.25;  
-	};      
-
-	document.getElementById("reset-button").onclick = function(){
-		
-		// The initial values
-
-		tx = 0.0;
-
-		ty = 0.0;
-
-		tz = 0.0;
-
-		angleXX = 0.0;
-
-		angleYY = 0.0;
-
-		angleZZ = 0.0;
-
-		sx = 0.25;
-
-		sy = 0.25;
-
-		sz = 0.25;
-		
-		rotationXX_ON = 0;
-		
-		rotationXX_DIR = 1;
-		
-		rotationXX_SPEED = 1;
-
-		rotationYY_ON = 0;
-		
-		rotationYY_DIR = 1;
-		
-		rotationYY_SPEED = 1;
-
-		rotationZZ_ON = 0;
-		
-		rotationZZ_DIR = 1;
-		
-		rotationZZ_SPEED = 1;
-	};      
 }
 
 //----------------------------------------------------------------------------
@@ -1069,6 +962,24 @@ function initWebGL( canvas, canvas2 ) {
 
 //----------------------------------------------------------------------------
 
+function new_game(){
+
+game_matrix = new Array();
+
+	for (var i = 0; i < 3; i++) {
+		game_matrix[i]=new Array();
+		for (var j = 0; j < 3; j++) {
+			game_matrix[i][j]=new Array();
+			for (var k = 0; k < 3; k++) {
+				game_matrix[i][j][k] = 0;
+			}
+		}
+	}
+
+}
+
+// ---------------------------------------------------------------
+
 function runWebGL() {
 	
 	var canvas = document.getElementById("my-canvas");
@@ -1085,6 +996,7 @@ function runWebGL() {
 	initBuffers();
 	initBuffers2();
 
+	new_game();
 
 	initTexture();
 	
@@ -1092,3 +1004,5 @@ function runWebGL() {
 
 	outputInfos();
 }
+
+

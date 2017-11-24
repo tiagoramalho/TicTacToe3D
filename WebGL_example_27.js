@@ -74,10 +74,11 @@ var tmpBlue;
 
 for(var i =0 ; i<72*27; i+=3){
     if(i % 72 == 0){
-        tmpRed = Math.random();
-        tmpGreen = Math.random();
-        tmpBlue = Math.random();
-        random_colors.push((tmpRed, tmpGreen, tmpBlue));
+        tmpRed =  Math.floor((Math.random()*255))/255;
+        tmpGreen =  Math.floor((Math.random()*255))/255;
+        tmpBlue =  Math.floor((Math.random()*255))/255;
+        var tuple = [tmpRed, tmpGreen, tmpBlue];
+        random_colors.push(tuple);
     }
     colors.push(tmpRed);
     colors.push(tmpGreen);
@@ -322,7 +323,6 @@ function initBuffers2() {
 	gl2.bufferData(gl2.ARRAY_BUFFER, new Float32Array(colors), gl2.STATIC_DRAW);
 	cubeVertexColorBuffer27.itemSize = 3;
 	cubeVertexColorBuffer27.numItems = vertices.length / 3;			
-	
 	// Vertex indices
     cubeVertexIndexBuffer2 = gl2.createBuffer();
     gl2.bindBuffer(gl2.ELEMENT_ARRAY_BUFFER, cubeVertexIndexBuffer2);
@@ -556,7 +556,6 @@ function drawScene2() {
 		for (var j = 0; j < possible_values.length; j++) {
 			for (var k = 0; k < possible_values.length; k++)
 
-
 				cube_array2.push(new Cube2( tx + possible_values[i],
 										 	ty + possible_values[j],
 										 	tz + possible_values[k],
@@ -578,12 +577,13 @@ function drawScene2() {
 
 	var canvas = document.getElementById("my-canvas2");
 
-    pixels = new Uint8Array(4);
+        pixels = new Uint8Array(4);
 
    	console.log(x_clicked + "  " + y_clicked)
 
 
    	gl2.readPixels( x_clicked, y_clicked, 1,1 , gl2.RGBA, gl2.UNSIGNED_BYTE, pixels);
+
 
 
 	           

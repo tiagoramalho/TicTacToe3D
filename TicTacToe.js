@@ -710,7 +710,14 @@ function set_variables(x, y){
 
 function user_play(){
 	console.log(pixels);
-
+    
+    console.log(random_colors[0]);
+    for(var i = 0; i < random_colors.length; i++){
+        if(pixels[0]/255 == random_colors[i][0] && pixels[1]/255 == random_colors[i][1] && pixels[2]/255 == random_colors[i][2]){
+            console.log("JOAO BRANQUINHO E UMA PUTA");
+        }
+     
+    }
 	loop1:
 	for (var i = 0; i < game_matrix.length; i++) {
 		for (var j = 0; j < game_matrix[i].length; j++) {

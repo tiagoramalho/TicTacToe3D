@@ -776,6 +776,7 @@ function tick() {
 	handleKeys();
 	
 	drawScene();
+	drawScene2();
 	
 	animate();
 }
@@ -991,7 +992,7 @@ function setEventListeners( canvas ){
 // WebGL Initialization
 //
 
-function initWebGL( canvas ) {
+function initWebGL( canvas, canvas2 ) {
 	try {
 		
 		// Create the WebGL context
@@ -1013,10 +1014,17 @@ function initWebGL( canvas ) {
 		// Enable it !
 		
 		gl.enable( gl.DEPTH_TEST );
+
+
+
+		gl2 = canvas2.getContext("webgl") || canvas2.getContext("experimental-webgl");
+		primitiveType2 = gl2.TRIANGLES;
+		gl2.enable( gl2.DEPTH_TEST );
+
 		
 	} catch (e) {
 	}
-	if (!gl) {
+	if (!gl || !gl2) {
 		alert("Could not initialise WebGL, sorry! :-(");
 	}        
 }
@@ -1026,14 +1034,20 @@ function initWebGL( canvas ) {
 function runWebGL() {
 	
 	var canvas = document.getElementById("my-canvas");
-	initWebGL( canvas );
+	var canvas2 = document.getElementById("my-canvas2");
 
+	initWebGL( canvas, canvas2 );
 	shaderProgram = initShadersTexture( gl );
+	shaderProgram2 = initShadersColor( gl2 );
 	
+
 	setEventListeners( canvas );
 	
-	initBuffers();
 	
+	initBuffers();
+	initBuffers2();
+
+
 	initTexture();
 	
 	tick();		// A timer controls the rendering / animation    

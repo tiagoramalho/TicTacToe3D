@@ -27,6 +27,8 @@ var cubeVertexTextureCoordBuffer;
 
 // The translation vector
 
+var pixels;
+
 var tx = 0.0;
 
 var ty = 0.0;
@@ -513,7 +515,7 @@ function drawScene() {
 	
 }
 
-function detect_intersection(x, y){
+/*function detect_intersection(x, y){
 
 	var canvas = document.getElementById("my-canvas");
 	var rect = canvas.getBoundingClientRect();	
@@ -538,7 +540,7 @@ function detect_intersection(x, y){
 
 }
 
-
+*/
 
 //----------------------------------------------------------------------------
 //
@@ -692,27 +694,47 @@ function change_player() {
 		console.log("problemas");
 }
 
+function set_variables(x, y){
+
+	var canvas = document.getElementById("my-canvas");
+	var rect = canvas.getBoundingClientRect();	
+
+    //aqui fico com as coordenadas do click
+    
+   	x_clicked = (x - rect.left);
+   	y_clicked = (y - rect.top);
+}
+
+
+function user_play(){
+	console.log(pixels);
+
+	loop1:
+	for (var i = 0; i < game_matrix.length; i++) {
+		for (var j = 0; j < game_matrix[i].length; j++) {
+			for (var k = 0; k < game_matrix[i][j].length; k++) {
+				if (game_matrix[j][2][0] == 0){
+					game_matrix[j][2][0] = player;
+					//change_player();
+						break loop1;
+
+				}
+			}
+		}
+	}
+}
+
 function handleMouseUp(event) {
 
     var newX = event.clientX;
   
     var newY = event.clientY;
+
     // se entrar no if nao se moveu logo se clicou num cubo e a jogada
     if(moveImage == false && newX == lastMouseX && newY == lastMouseY){
-        detect_intersection(newX, newY);
-	loop1:
-		for (var i = 0; i < game_matrix.length; i++) {
-			for (var j = 0; j < game_matrix[i].length; j++) {
-				for (var k = 0; k < game_matrix[i][j].length; k++) {
-					if (game_matrix[j][2][0] == 0){
-						game_matrix[j][2][0] = player;
-						//change_player();
-						break loop1;
+		set_variables(newX, newY);
+       	setTimeout(user_play(),1000);
 
-					}
-				}
-			}
-		}
     }
     console.log("Winner: "+evaluate_win());
     mouseDown = false;

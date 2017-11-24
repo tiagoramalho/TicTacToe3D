@@ -26,7 +26,12 @@ var primitiveType2 = null;
 
 var gl2 = null; // WebGL context
 
+var pixels;
+
 var shaderProgram2 = null; 
+
+var x_clicked;
+var y_clicked;
 
 var colors = [];
 var random_colors=[];
@@ -515,8 +520,10 @@ function drawScene2() {
 	var mvMatrix = mat4();
 	
 	// Clearing with the background color
+	gl2.clearColor(255, 0, 0.2, 255);
 	
 	gl2.clear(gl2.COLOR_BUFFER_BIT);
+
 	
 	// NEW --- Computing the Projection Matrix
 	
@@ -565,6 +572,18 @@ function drawScene2() {
         countRandom = 1;
     else
         countRandom++;
+
+
+
+
+	var canvas = document.getElementById("my-canvas2");
+
+    pixels = new Uint8Array(4);
+
+
+   	gl2.readPixels( x_clicked, y_clicked, 1,1 , gl2.RGBA, gl2.UNSIGNED_BYTE, pixels);
+
+   	console.log(x_clicked + "  " + y_clicked)
 
 	           
 }
@@ -694,12 +713,3 @@ function runWebGL2() {
 
 }
 
-
-function intersectCube(x, y, width, height){
-
-    var pixels = new Uint8Array(width * height *4);
-
-    gl2.readPixels(x, y, width, height, gl2.RGBA, gl2.UNSIGNED_BYTE, pixels);
-    console.log(pixels); // Uint8Array
-    return pixels;
-}

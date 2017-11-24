@@ -543,7 +543,7 @@ function drawScene2() {
 	
 	// Call the drawModel function !!
 	var possible_values = [-0.5, 0, 0.5]
-
+    cube_array2 = [];
 	var number = 0;
 	for (var i = 0; i < possible_values.length; i++) {
 		for (var j = 0; j < possible_values.length; j++) {

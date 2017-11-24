@@ -517,19 +517,22 @@ function detect_intersection(x, y){
 
 	var canvas = document.getElementById("my-canvas");
 	var rect = canvas.getBoundingClientRect();	
-
+    console.log("X:" + x + " Y:" + y);
+    console.log(rect);
+    console.log("X:" + (x - rect.left) + " Y:" + (y - rect.top));
     //aqui fico com as coordenadas do click
-    
-   	var x_clicked = (x - rect.left) / rect.width * 2 - 1;
-   	var y_clicked = (y - rect.top) / rect.height * -2 + 1;
+//   	var x_clicked = (x - rect.left) / rect.width * 2 - 1;
+//   	var y_clicked = (y - rect.top) / rect.height * -2 + 1;
 
-    console.log("CLicked: X " + x_clicked + " - Y " + y_clicked);
-    var idCubo = intersectCube( x , y, rect.width, rect.height);
+//    console.log("CLicked: X " + x_clicked + " - Y " + y_clicked);
+
+    var idCubo = intersectCube( (x - rect.left) , (y - rect.top), rect.width, rect.height);
     console.log(idCubo);
 
-    var pixels = new Uint8Array(rect.width * rect.height *4);
-
-    gl2.readPixels( (x - rect.left), (y - rect.top),rect.width ,rect.height , gl2.RGBA, gl2.UNSIGNED_BYTE, pixels);
+    console.log("aquis");
+    var pixels = new Uint8Array(4);
+    gl2.readPixels((x - rect.left), (y - rect.top),1,1, gl2.RGBA, gl2.UNSIGNED_BYTE, pixels);
+    
     console.log(pixels); // Uint8Array
 
 

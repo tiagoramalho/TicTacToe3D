@@ -306,7 +306,7 @@ function initTexture() {
 		handleLoadedTexture(ramalhoTexture)
 	}
 
-	ramalhoTexture.image.src = "x.gif";
+	ramalhoTexture.image.src = "x3.jpg";
 
 
 	brancoTexture = gl.createTexture();
@@ -315,7 +315,7 @@ function initTexture() {
 		handleLoadedTexture(brancoTexture)
 	}
 
-	brancoTexture.image.src = "bola.png";
+	brancoTexture.image.src = "bola3.jpg";
 
 
 	neutralTexture = gl.createTexture();
@@ -324,7 +324,7 @@ function initTexture() {
 		handleLoadedTexture(neutralTexture)
 	}
 
-	neutralTexture.image.src = "cinza.jpg";
+	neutralTexture.image.src = "cinza3.jpg";
 }
 
 

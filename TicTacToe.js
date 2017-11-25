@@ -1,4 +1,4 @@
-//////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
 //
 //  TicTacToe.js 
 //
@@ -81,11 +81,11 @@ var rotationZZ_SPEED = 1;
 
 var cube_array;
 
-var player = "ramalho";
+var player = "player1";
 
-var ramalho_wins = 0;
+var p1_wins = 0;
 
-var branco_wins = 0;
+var p2_wins = 0;
 
 
  // NEW - GLOBAL Animation controls
@@ -341,26 +341,26 @@ function handleLoadedTexture(texture) {
 	gl.bindTexture(gl.TEXTURE_2D, null);
 }
 
-var ramalhoTexture;
-var brancoTexture;
+var player1Texture;
+var player2Texture;
 
 function initTexture() {
-	ramalhoTexture = gl.createTexture();
-	ramalhoTexture.image = new Image();
-	ramalhoTexture.image.onload = function () {
-		handleLoadedTexture(ramalhoTexture)
+	player1Texture = gl.createTexture();
+	player1Texture.image = new Image();
+	player1Texture.image.onload = function () {
+		handleLoadedTexture(player1Texture)
 	}
 
-	ramalhoTexture.image.src = "x3.jpg";
+	player1Texture.image.src = "x1.jpg";
 
 
-	brancoTexture = gl.createTexture();
-	brancoTexture.image = new Image();
-	brancoTexture.image.onload = function () {
-		handleLoadedTexture(brancoTexture)
+	player2Texture = gl.createTexture();
+	player2Texture.image = new Image();
+	player2Texture.image.onload = function () {
+		handleLoadedTexture(player2Texture)
 	}
 
-	brancoTexture.image.src = "bola3.jpg";
+	player2Texture.image.src = "bola1.jpg";
 
 
 	neutralTexture = gl.createTexture();
@@ -369,7 +369,7 @@ function initTexture() {
 		handleLoadedTexture(neutralTexture)
 	}
 
-	neutralTexture.image.src = "cinza3.jpg";
+	neutralTexture.image.src = "cinza1.jpg";
 }
 
 
@@ -454,10 +454,10 @@ function drawModel( angleXX, angleYY, angleZZ,
 
     gl.activeTexture(gl.TEXTURE0);
     if (texture_id == 1)
-   		gl.bindTexture(gl.TEXTURE_2D, ramalhoTexture);
+   		gl.bindTexture(gl.TEXTURE_2D, player1Texture);
     
     else if (texture_id == 0)
-   		gl.bindTexture(gl.TEXTURE_2D, brancoTexture);
+   		gl.bindTexture(gl.TEXTURE_2D, player2Texture);
 
    	else
    		gl.bindTexture(gl.TEXTURE_2D, neutralTexture);
@@ -490,10 +490,10 @@ class Cube {
     this.tz = tz;
 
     var id = 3;
-    if (owner == "ramalho")
+    if (owner == "player1")
     	id = 1;
 
-   	else if(owner == "branco")
+   	else if(owner == "player2")
    		id = 0;
 
     drawModel( -angleXX, angleYY, angleZZ, 
@@ -559,33 +559,6 @@ function drawScene() {
 	}
 	
 }
-
-/*function detect_intersection(x, y){
-
-	var canvas = document.getElementById("my-canvas");
-	var rect = canvas.getBoundingClientRect();	
-    console.log("X:" + x + " Y:" + y);
-    console.log(rect);
-    console.log("X:" + (x - rect.left) + " Y:" + (y - rect.top));
-    //aqui fico com as coordenadas do click
-//   	var x_clicked = (x - rect.left) / rect.width * 2 - 1;
-//   	var y_clicked = (y - rect.top) / rect.height * -2 + 1;
-
-//    console.log("CLicked: X " + x_clicked + " - Y " + y_clicked);
-
-    var idCubo = intersectCube( (x - rect.left) , (y - rect.top), rect.width, rect.height);
-    console.log(idCubo);
-
-    console.log("aquis");
-    var pixels = new Uint8Array(4);
-    gl2.readPixels((x - rect.left), (y - rect.top),1,1, gl2.RGBA, gl2.UNSIGNED_BYTE, pixels);
-    
-    console.log(pixels); // Uint8Array
-
-
-}
-
-*/
 
 //----------------------------------------------------------------------------
 //
@@ -728,11 +701,11 @@ function handleMouseDown(event) {
 }
 
 function change_player() {
-	if (player == "ramalho"){
-		player = "branco";
+	if (player == "player1"){
+		player = "player2";
 	}
-	else if (player == "branco"){
-		player = "ramalho";
+	else if (player == "player2"){
+		player = "player1";
 	}
 	else
 		console.log("problemas");
@@ -785,19 +758,19 @@ function handleMouseUp(event) {
 
 	if (winner && !game_blocked){
 
-		if(winner == "ramalho"){
+		if(winner == "player1"){
 			document.getElementById("info").innerHTML = "Player 1 WOOON! :)";
-			ramalho_wins++;
+			p1_wins++;
 
 		}
 
 		else{
 			document.getElementById("info").innerHTML = "Player 2 WOOON! :)";
-			branco_wins++;
+			p2_wins++;
 
 		}
-		document.getElementById("vit1").innerHTML = "Vitórias: " + ramalho_wins;
-		document.getElementById("vit2").innerHTML = "Vitórias: " + branco_wins;
+		document.getElementById("vit1").innerHTML = "Vitórias: " + p1_wins;
+		document.getElementById("vit2").innerHTML = "Vitórias: " + p2_wins;
 
 		document.getElementById("new_game").style.visibility = "";
 
@@ -898,9 +871,13 @@ function setEventListeners( canvas ){
 
 	document.getElementById("reset").onclick = function(){
 
-		ramalho_wins = 0;
-		branco_wins = 0;
-		player = "ramalho";
+		p1_wins = 0;
+		p2_wins = 0;
+		player = "player1";
+		new_game();
+		game_blocked = false;
+		document.getElementById("vit1").innerHTML = "Vitórias: " + p1_wins;
+		document.getElementById("vit2").innerHTML = "Vitórias: " + p2_wins;
 		document.getElementById("new_game").style.visibility = "hidden";
 
 

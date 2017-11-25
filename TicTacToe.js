@@ -9,8 +9,6 @@
 // Global Variables
 //
 
-var matrixGlobal; 
-
 var gl = null; // WebGL context
 
 var shaderProgram = null; 
@@ -41,15 +39,7 @@ var globalAngleYY = 0.0;
 
 var globalAngleXX = 0.0;
 
-var globalTz = 0;
-
-// The rotation angles in degrees
-
-var angleXX = 0.0;
-
-var angleYY = 0.0;
-
-var angleZZ = 0.0;
+var globalTz = -3;
 
 // The scaling factors
 
@@ -60,24 +50,6 @@ var sy = 0.25;
 var sz = 0.25;
 
 // NEW - Animation controls
-
-var rotationXX_ON = 0;
-
-var rotationXX_DIR = 1;
-
-var rotationXX_SPEED = 1;
- 
-var rotationYY_ON = 0;
-
-var rotationYY_DIR = 1;
-
-var rotationYY_SPEED = 1;
- 
-var rotationZZ_ON = 0;
-
-var rotationZZ_DIR = 1;
-
-var rotationZZ_SPEED = 1;
 
 var cube_array;
 
@@ -351,7 +323,7 @@ function initTexture() {
 		handleLoadedTexture(player1Texture)
 	}
 
-	player1Texture.image.src = "x1.jpg";
+	player1Texture.image.src = "images/x1.jpg";
 
 
 	player2Texture = gl.createTexture();
@@ -360,7 +332,7 @@ function initTexture() {
 		handleLoadedTexture(player2Texture)
 	}
 
-	player2Texture.image.src = "bola1.jpg";
+	player2Texture.image.src = "images/bola1.jpg";
 
 
 	neutralTexture = gl.createTexture();
@@ -369,7 +341,7 @@ function initTexture() {
 		handleLoadedTexture(neutralTexture)
 	}
 
-	neutralTexture.image.src = "cinza1.jpg";
+	neutralTexture.image.src = "images/cinza1.jpg";
 }
 
 
@@ -412,8 +384,7 @@ function initBuffers() {
 
 //  Drawing the model
 
-function drawModel( angleXX, angleYY, angleZZ, 
-					sx, sy, sz,
+function drawModel(	sx, sy, sz,
 					tx, ty, tz,
 					mvMatrix,
 					primitiveType,
@@ -423,15 +394,7 @@ function drawModel( angleXX, angleYY, angleZZ,
    	tmp = mult( rotationXXMatrix( globalAngleXX), rotationYYMatrix( globalAngleYY ));
    	mvMatrix = mult( translationMatrix( 0, 0, globalTz), tmp); 
 
-  	matrixGlobal = mvMatrix;
-
 	mvMatrix = mult( mvMatrix, translationMatrix( tx, ty, tz ) );
-						 
-	mvMatrix = mult( mvMatrix, rotationZZMatrix( angleZZ ) );
-	
-	mvMatrix = mult( mvMatrix, rotationYYMatrix( angleYY ) );
-	
-	mvMatrix = mult( mvMatrix, rotationXXMatrix( angleXX ) );
 	
 	mvMatrix = mult( mvMatrix, scalingMatrix( sx, sy, sz ) );
 						 
@@ -496,8 +459,7 @@ class Cube {
    	else if(owner == "player2")
    		id = 0;
 
-    drawModel( -angleXX, angleYY, angleZZ, 
-	           sx, sy, sz,
+    drawModel( sx, sy, sz,
 	           tx , ty, tz,
 	           mvMatrix,
 	           primitiveType,
@@ -519,30 +481,11 @@ function drawScene() {
 	
 	gl.clear(gl.COLOR_BUFFER_BIT);
 	
-	// NEW --- Computing the Projection Matrix
-	
-    	// A standard view volume.
-    
-    	// Viewer is at (0,0,0)
-    
-    	// Ensure that the model is "inside" the view volume
-    
-    	pMatrix = perspective( 45, 1, near, far);
-    
-    	globalTz = -3;
+  	pMatrix = perspective( 45, 1, near, far);
 
-
-	// Passing the Projection Matrix to apply the current projection
-	
 	var pUniform = gl.getUniformLocation(shaderProgram, "uPMatrix");
 	
 	gl.uniformMatrix4fv(pUniform, false, new Float32Array(flatten(pMatrix)));
-	
-	// NEW --- Instantianting the same model more than once !!
-	
-	// And with diferent transformation parameters !!
-	
-	// Call the drawModel function !!
 
 	var possible_values = [-0.5, 0, 0.5]
 	cube_array = [];
@@ -574,26 +517,10 @@ function animate() {
 	var timeNow = new Date().getTime();
 	
 	if( lastTime != 0 ) {
-		
 		var elapsed = timeNow - lastTime;
     if( globalRotationYY_ON ) {
 
 			globalAngleYY += globalRotationYY_DIR * globalRotationYY_SPEED * (90 * elapsed) / 1000.0;
-	    }
-		
-		if( rotationXX_ON ) {
-
-			angleXX += rotationXX_DIR * rotationXX_SPEED * (90 * elapsed) / 1000.0;
-	    }
-
-		if( rotationYY_ON ) {
-
-			angleYY += rotationYY_DIR * rotationYY_SPEED * (90 * elapsed) / 1000.0;
-	    }
-
-		if( rotationZZ_ON ) {
-
-			angleZZ += rotationZZ_DIR * rotationZZ_SPEED * (90 * elapsed) / 1000.0;
 	    }
 	}
 	
@@ -625,50 +552,6 @@ function handleKeys() {
 		sx *= 1.1;
 		
 		sz = sy = sx;
-	}
-	if (currentlyPressedKeys[37]) {
-		
-		// Left cursor key
-		
-		if( rotationYY_ON == 0 ) {
-			
-			rotationYY_ON = 1;
-		}  
-		
-		rotationYY_SPEED -= 0.25;
-	}
-	if (currentlyPressedKeys[39]) {
-		
-		// Right cursor key
-		
-		if( rotationYY_ON == 0 ) {
-			
-			rotationYY_ON = 1;
-		}  
-		
-		rotationYY_SPEED += 0.25;
-	}
-	if (currentlyPressedKeys[38]) {
-		
-		// Up cursor key
-		
-		if( rotationXX_ON == 0 ) {
-			
-			rotationXX_ON = 1;
-		}  
-		
-		rotationXX_SPEED -= 0.25;
-	}
-	if (currentlyPressedKeys[40]) {
-		
-		// Down cursor key
-		
-		if( rotationXX_ON == 0 ) {
-			
-			rotationXX_ON = 1;
-		}  
-		
-		rotationXX_SPEED += 0.25;
 	}
 }
 

@@ -186,7 +186,6 @@ function evaluate_win(){
 			for (var k = 0; k < game_matrix[i][j].length; k++) {
 				if (game_matrix[i][j][0] != 0 && game_matrix[i][j][k] == game_matrix[i][j][0]){
 					if(k == game_matrix[i][j].length-1){
-						console.log("2")
 						return game_matrix[i][j][k];
 					}
 				}
@@ -201,7 +200,6 @@ function evaluate_win(){
 			for (var k = 0; k < game_matrix[i][j].length; k++) {
 				if (game_matrix[i][0][j] != 0 && game_matrix[i][k][j] == game_matrix[i][0][j]){
 					if(k == game_matrix[i][j].length-1){
-						console.log("2");
 						return game_matrix[i][k][j];
 					}	
 				}
@@ -216,7 +214,6 @@ function evaluate_win(){
 			for (var k = 0; k < game_matrix[i][j].length; k++) {
 				if (game_matrix[0][i][j] != 0 && game_matrix[k][i][j] == game_matrix[0][i][j]){
 					if(k == game_matrix[i][j].length-1){
-						console.log("3");
 						return game_matrix[k][i][j];
 					}
 				}
@@ -228,12 +225,10 @@ function evaluate_win(){
 	
 	for (var i = 0; i < game_matrix.length; i++) {
 		if (game_matrix[0][0][i] != 0 && game_matrix[0][0][i] ==  game_matrix[1][1][i] && game_matrix[1][1][i] == game_matrix[2][2][i]){
-			console.log("4");
 			return game_matrix[0][0][i];
 		}
 
 		if (game_matrix[2][0][i] != 0 && game_matrix[2][0][i] ==  game_matrix[1][1][i] && game_matrix[1][1][i] == game_matrix[0][2][i]){
-			console.log("4");
 			return game_matrix[2][0][i];
 		}
 		
@@ -241,45 +236,37 @@ function evaluate_win(){
 
 	for (var i = 0; i < game_matrix.length; i++) {
 		if (game_matrix[i][0][2] != 0 && game_matrix[i][0][2] ==  game_matrix[i][1][1] && game_matrix[i][1][1] == game_matrix[i][2][0]){
-			console.log("5");
 			return game_matrix[i][0][2];
 		}
 
 		if (game_matrix[i][2][2] != 0 && game_matrix[i][2][2] ==  game_matrix[i][1][1] && game_matrix[i][1][1] == game_matrix[i][0][0]){
-			console.log("5");
 			return game_matrix[i][2][2];
 		}
 	}
 
 	for (var i = 0; i < game_matrix.length; i++) {
 		if (game_matrix[0][i][0] != 0 && game_matrix[0][i][0] ==  game_matrix[1][i][1] && game_matrix[1][i][1] == game_matrix[2][i][2]){
-			console.log("6");
 			return game_matrix[0][i][0];
 		}
 
 		if (game_matrix[0][i][2] != 0 && game_matrix[0][i][2] ==  game_matrix[1][i][1] && game_matrix[1][i][1] == game_matrix[2][i][0]){
-			console.log("6");
 			return game_matrix[0][i][2];
 		}
 	}
 
 	if (game_matrix[0][0][0] != 0 && game_matrix[0][0][0] == game_matrix[1][1][1] && game_matrix[1][1][1] == game_matrix[2][2][2]){
-		console.log("7");
 		return game_matrix[0][0][0];
 	}
 
 	if (game_matrix[0][0][2] != 0 && game_matrix[0][0][2] == game_matrix[1][1][1] && game_matrix[1][1][1] == game_matrix[2][2][0]){
-		console.log("7");
 		return game_matrix[0][0][2];
 	}
 
 	if (game_matrix[0][2][2] != 0 && game_matrix[0][2][2] == game_matrix[1][1][1] && game_matrix[1][1][1] == game_matrix[2][0][0]){
-		console.log("7");
 		game_matrix[0][2][2]
 	}
 
 	if (game_matrix[2][0][2] != 0 && game_matrix[2][0][2] == game_matrix[1][1][1] && game_matrix[1][1][1] == game_matrix[0][2][0]){
-		console.log("7");
 		game_matrix[2][0][2]
 	}
 
@@ -561,7 +548,7 @@ function change_player() {
 		player = "player1";
 	}
 	else
-		console.log("problemas");
+		console.log(" ");
 }
 
 function set_variables(x, y){
@@ -577,11 +564,9 @@ function set_variables(x, y){
 
 
 function user_play(){
-	console.log(pixels);
     
     for(var i = 0; i < cube_array2.length; i++){
         if(pixels[0]/255 == cube_array2[i].tupleColor[0] && pixels[1]/255 == cube_array2[i].tupleColor[1]  && pixels[2]/255 == cube_array2[i].tupleColor[2] ){
-            console.log(cube_array2[i].position);
             if(game_matrix[cube_array2[i].position[0]][ cube_array2[i].position[1]][ cube_array2[i].position[2]] == 0){
 			    game_matrix[cube_array2[i].position[0]][ cube_array2[i].position[1]][ cube_array2[i].position[2]] = player;
 			    change_player();
@@ -629,7 +614,6 @@ function handleMouseUp(event) {
 
 		game_blocked = true;
 	}
-    console.log("Winner: "+ winner);
     mouseDown = false;
 }
 

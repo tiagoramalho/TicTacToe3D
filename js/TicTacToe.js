@@ -709,6 +709,7 @@ function setEventListeners( canvas ){
 		game_blocked = false;
 		document.getElementById("vit1").innerHTML = "Vitórias: " + p1_wins;
 		document.getElementById("vit2").innerHTML = "Vitórias: " + p2_wins;
+		document.getElementById("info").innerHTML = "";
 		document.getElementById("new_game").style.visibility = "hidden";
 
 
@@ -717,7 +718,7 @@ function setEventListeners( canvas ){
 	document.getElementById("new_game").onclick = function(){
 		new_game();
 		game_blocked = false;
-
+		document.getElementById("info").innerHTML = "";
 		document.getElementById("new_game").style.visibility = "hidden";
 
 
